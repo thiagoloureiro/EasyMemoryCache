@@ -29,7 +29,7 @@ First register the component as Singletion in your Application:
 
 caching.GetOrSetObjectFromCache(CacheKeyName, 20, ReturnListOfString);
 ```
-# ASP.NET Core Example
+## ASP.NET Core Example
 ```services.AddTransient<IReportService, ReportService>();```
 ## Async:
 ```var lstStringFromAsync = await await caching.GetOrSetObjectFromCacheAsync(CacheKeyNameForAsync, 20, ReturnListOfStringAsync);```
