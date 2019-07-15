@@ -28,8 +28,8 @@ return caching;```
 
 caching.GetOrSetObjectFromCache(CacheKeyName, 20, ReturnListOfString);
 ```
-## ASP.NET Core Example
-```services.AddTransient<IReportService, ReportService>();```
+## ASP.NET Core Example (Startup.cs)
+```services.AddSingleton<IReportService, ReportService>();```
 ## Async:
 ```var lstStringFromAsync = await await caching.GetOrSetObjectFromCacheAsync(CacheKeyNameForAsync, 20, ReturnListOfStringAsync);```
 
