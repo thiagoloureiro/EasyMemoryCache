@@ -18,8 +18,7 @@ First register the component as Singletion in your Application:
 ```.AddSingleton<ICaching, Caching>()```
 
 ## .NET Core Console Example
-```
- //setup our DI
+```//setup our DI
                 var serviceProvider = new ServiceCollection()
                     .AddSingleton<ICaching, Caching>()
                     .BuildServiceProvider();
