@@ -24,10 +24,9 @@ var serviceProvider = new ServiceCollection()
     .BuildServiceProvider();
 
 var caching = serviceProvider.GetService<ICaching>();
-return caching;```
-
-caching.GetOrSetObjectFromCache(CacheKeyName, 20, ReturnListOfString);
+return caching;
 ```
+
 ## ASP.NET Core Example (Startup.cs)
 ```services.AddSingleton<IReportService, ReportService>();```
 ## Async:
