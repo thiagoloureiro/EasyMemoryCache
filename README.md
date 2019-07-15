@@ -19,12 +19,12 @@ First register the component as Singletion in your Application:
 
 ## .NET Core Console Example
 ```//setup our DI
-                var serviceProvider = new ServiceCollection()
-                    .AddSingleton<ICaching, Caching>()
-                    .BuildServiceProvider();
+var serviceProvider = new ServiceCollection()
+    .AddSingleton<ICaching, Caching>()
+    .BuildServiceProvider();
 
-                var caching = serviceProvider.GetService<ICaching>();
-                return caching;```
+var caching = serviceProvider.GetService<ICaching>();
+return caching;```
 
 caching.GetOrSetObjectFromCache(CacheKeyName, 20, ReturnListOfString);
 ```
