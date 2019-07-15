@@ -13,6 +13,7 @@
     <Copyright>2019© Thiago Loureiro</Copyright>
     <PackageLicenseFile>LICENSE</PackageLicenseFile>
     <PackageReleaseNotes>First Initial Release</PackageReleaseNotes>
+    <PackageIconUrl>https://raw.githubusercontent.com/thiagoloureiro/EasyMemoryCache/master/cacheicon.png</PackageIconUrl>
   </PropertyGroup>
 
   <ItemGroup>
