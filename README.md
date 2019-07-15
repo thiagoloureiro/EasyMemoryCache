@@ -32,6 +32,9 @@ return caching;
 ## Async:
 ```var lstStringFromAsync = await await caching.GetOrSetObjectFromCacheAsync(CacheKeyNameForAsync, 20, ReturnListOfStringAsync);```
 
+## With parameters:
+```var lstStringFromAsync = await await caching.GetOrSetObjectFromCacheAsync(CacheKeyNameForAsync, 20, () => ReturnListOfStringAsync(param));```
+
 ## Sync:
 ```var lstString = caching.GetOrSetObjectFromCache(CacheKeyName, 20, ReturnListOfString);```
 
