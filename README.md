@@ -7,12 +7,12 @@
 
 #### .NET Component to easily implement MemoryCache (sync and async) for your .NET Core Application
 
-## How to Use:
+# How to Use:
 Open Package Manager Console and run:
 
 ```Install-Package EasyMemoryCache```
 
-## Usage:
+# Usage:
 First register the component as Singletion in your Application:
 
 ```.AddSingleton<ICaching, Caching>()```
@@ -29,12 +29,12 @@ First register the component as Singletion in your Application:
 
 caching.GetOrSetObjectFromCache(CacheKeyName, 20, ReturnListOfString);
 ```
-## ASP.NET Core Example
+# ASP.NET Core Example
 ```services.AddTransient<IReportService, ReportService>();```
-# Async:
+## Async:
 ```var lstStringFromAsync = await await caching.GetOrSetObjectFromCacheAsync(CacheKeyNameForAsync, 20, ReturnListOfStringAsync);```
 
-# Sync:
+## Sync:
 ```var lstString = caching.GetOrSetObjectFromCache(CacheKeyName, 20, ReturnListOfString);```
 
 ## Check the code sample in src directory
