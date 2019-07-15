@@ -2,3 +2,39 @@
 [![Build status](https://ci.appveyor.com/api/projects/status/leosvxv97m6cd1ki?svg=true)](https://ci.appveyor.com/project/thiagoloureiro/easymemorycache)
 
 [![Build history](https://buildstats.info/appveyor/chart/thiagoloureiro/easymemorycache)](https://ci.appveyor.com/project/thiagoloureiro/easymemorycache/history)
+
+[![NuGet](https://buildstats.info/nuget/EasyMemoryCache)](http://www.nuget.org/packages/EasyMemoryCache)
+
+#### .NET Component to easily implement MemoryCache (sync and async) for your .NET Core Application
+
+## How to Use:
+Open Package Manager Console and run:
+
+```Install-Package EasyMemoryCache```
+
+## Usage:
+First register the component as Singletion in your Application:
+
+```.AddSingleton<ICaching, Caching>()```
+
+## .NET Core Console Example
+```
+ //setup our DI
+                var serviceProvider = new ServiceCollection()
+                    .AddSingleton<ICaching, Caching>()
+                    .BuildServiceProvider();
+
+                var caching = serviceProvider.GetService<ICaching>();
+                return caching;```
+
+caching.GetOrSetObjectFromCache(CacheKeyName, 20, ReturnListOfString);
+```
+## ASP.NET Core Example
+```services.AddTransient<IReportService, ReportService>();```
+# Async:
+```var lstStringFromAsync = await await caching.GetOrSetObjectFromCacheAsync(CacheKeyNameForAsync, 20, ReturnListOfStringAsync);```
+
+# Sync:
+```var lstString = caching.GetOrSetObjectFromCache(CacheKeyName, 20, ReturnListOfString);```
+
+## Check the code sample in src directory
