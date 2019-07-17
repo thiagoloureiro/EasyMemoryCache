@@ -4,7 +4,7 @@
 [![Build history](https://buildstats.info/appveyor/chart/thiagoloureiro/easymemorycache)](https://ci.appveyor.com/project/thiagoloureiro/easymemorycache/history)
 
 [![NuGet](https://buildstats.info/nuget/EasyMemoryCache)](http://www.nuget.org/packages/EasyMemoryCache)
-
+![](https://img.shields.io/appveyor/tests/thiagoloureiro/easymemorycache.svg)
 #### .NET Component to easily implement MemoryCache (sync and async) for your .NET Core Application
 
 # How to Use:
@@ -28,12 +28,12 @@ return caching;
 ```
 
 ## ASP.NET Core Example (Startup.cs)
-```services.AddSingleton<IReportService, ReportService>();```
+```services.AddSingleton<ICaching, Caching>();```
 ## Async:
-```var lstStringFromAsync = await await caching.GetOrSetObjectFromCacheAsync(CacheKeyNameForAsync, 20, ReturnListOfStringAsync);```
+```var lstStringFromAsync = await caching.GetOrSetObjectFromCacheAsync(CacheKeyNameForAsync, 20, ReturnListOfStringAsync);```
 
 ## With parameters:
-```var lstStringFromAsync = await await caching.GetOrSetObjectFromCacheAsync(CacheKeyNameForAsync, 20, () => ReturnListOfStringAsync(param));```
+```var lstStringFromAsync = await caching.GetOrSetObjectFromCacheAsync(CacheKeyNameForAsync, 20, () => ReturnListOfStringAsync(param));```
 
 ## Sync:
 ```var lstString = caching.GetOrSetObjectFromCache(CacheKeyName, 20, ReturnListOfString);```
