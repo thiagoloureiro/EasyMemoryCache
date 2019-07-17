@@ -22,13 +22,23 @@ namespace EasyMemoryCache
             return cachedObject;
         }
 
-        public async Task<T> GetOrSetObjectFromCacheAsync<T>(string cacheItemName, int cacheTimeInMinutes, Func<T> objectSettingFunction)
+        public async Task<T> GetOrSetObjectFromCacheAsync<T>(string cacheItemName, int cacheTimeInMinutes, Func<Task<T>> objectSettingFunction)
         {
-            return await _myCache.GetOrCreateAsync(cacheItemName, factory =>
+            var cachedObject = (T)_myCache.Get(cacheItemName);
+            if (cachedObject == null)
             {
-                factory.AbsoluteExpiration = DateTimeOffset.Now.AddMinutes(cacheTimeInMinutes);
-                return Task.FromResult(objectSettingFunction());
-            });
+                try
+                {
+                    cachedObject = await objectSettingFunction();
+                    _myCache.Set(cacheItemName, cachedObject, DateTimeOffset.Now.AddMinutes(cacheTimeInMinutes));
+
+                }
+                catch (Exception)
+                {
+                    return cachedObject;
+                }
+            }
+            return cachedObject;
         }
 
         public void Invalidate(string key)

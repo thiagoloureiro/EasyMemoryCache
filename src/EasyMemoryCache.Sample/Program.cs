@@ -10,6 +10,8 @@ namespace EasyMemoryCache.Sample
         private static async Task Main(string[] args)
         {
             var CacheKeyNameForAsync = "unitTestStringKeyAsync";
+            var CacheKeyNameWithParamForAsync = "unitTestStringKeyWithParamAsync";
+
             var CacheKeyName = "unitTestStringKey";
 
             var caching = SetupDI;
@@ -18,14 +20,18 @@ namespace EasyMemoryCache.Sample
             Console.WriteLine("Caching Lists");
             Console.WriteLine("--------------");
 
-            var lstStringFromAsync = await await caching.GetOrSetObjectFromCacheAsync(CacheKeyNameForAsync, 20, ReturnListOfStringAsync);
+            var lstStringFromAsync = await caching.GetOrSetObjectFromCacheAsync(CacheKeyNameForAsync, 20, ReturnListOfStringAsync);
             var lstString = caching.GetOrSetObjectFromCache(CacheKeyName, 20, ReturnListOfString);
+            var lstStringWithParamFromAsync = await caching.GetOrSetObjectFromCacheAsync(CacheKeyNameWithParamForAsync, 20, () => ReturnListOfStringAsync("EasyMemoryCache"));
 
             Console.WriteLine(string.Join(",", lstStringFromAsync));
             Console.WriteLine(string.Join(",", lstString));
+            Console.WriteLine(string.Join(",", lstStringWithParamFromAsync));
 
-            var lstStringCachedFromAsync = await await caching.GetOrSetObjectFromCacheAsync(CacheKeyNameForAsync, 20, ReturnListOfStringAsync);
+
+            var lstStringCachedFromAsync = await caching.GetOrSetObjectFromCacheAsync(CacheKeyNameForAsync, 20, ReturnListOfStringAsync);
             var lstStringCached = caching.GetOrSetObjectFromCache(CacheKeyName, 20, ReturnListOfString);
+            var lstStringCachedWithParamFromAsync = await caching.GetOrSetObjectFromCacheAsync(CacheKeyNameWithParamForAsync, 20, () => ReturnListOfStringAsync("EasyMemoryCache"));
 
             Console.WriteLine("-----------------------------------------------------------------");
             Console.WriteLine("From Cache, you can notice now GenerateList method isn't called");
@@ -33,6 +39,8 @@ namespace EasyMemoryCache.Sample
 
             Console.WriteLine(string.Join(",", lstStringCachedFromAsync));
             Console.WriteLine(string.Join(",", lstStringCached));
+            Console.WriteLine(string.Join(",", lstStringCachedWithParamFromAsync));
+
         }
 
         private static ICaching SetupDI
@@ -59,10 +67,21 @@ namespace EasyMemoryCache.Sample
             return Task.Run(GenerateList);
         }
 
+        private static Task<List<string>> ReturnListOfStringAsync(string param)
+        {
+            return Task.Run(() => GenerateListParam(param));
+        }
+
         private static List<string> GenerateList()
         {
             Console.WriteLine("Generating the list...");
             return new List<string> { "foo", "bar", "easy", "caching" };
+        }
+
+        private static List<string> GenerateListParam(string param)
+        {
+            Console.WriteLine("Generating the list...");
+            return new List<string> { "foo", "bar", "easy", "caching", param };
         }
     }
 }

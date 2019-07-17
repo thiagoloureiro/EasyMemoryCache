@@ -16,12 +16,12 @@ namespace EasyMemoryCache.Tests
             var caching = new Caching();
 
             // Act
-            var ret = await await caching.GetOrSetObjectFromCacheAsync(CacheKeyName, 20, ReturnListOfStringAsync);
+            var ret = await caching.GetOrSetObjectFromCacheAsync(CacheKeyName, 20, ReturnListOfStringAsync);
 
             // Assert
             // Only for asserting purposes, no need to use GetValueFromCache, just use the GetOrSetObjectFromCacheAsync
             var objectTask = caching.GetValueFromCache(CacheKeyName);
-            var lst = await (Task<List<string>>)objectTask;
+            var lst = (List<string>)objectTask;
             Assert.Equal(lst, GenerateList());
             Assert.Equal(ret, GenerateList());
         }
