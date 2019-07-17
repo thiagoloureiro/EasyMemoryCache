@@ -30,10 +30,10 @@ return caching;
 ## ASP.NET Core Example (Startup.cs)
 ```services.AddSingleton<IReportService, ReportService>();```
 ## Async:
-```var lstStringFromAsync = await await caching.GetOrSetObjectFromCacheAsync(CacheKeyNameForAsync, 20, ReturnListOfStringAsync);```
+```var lstStringFromAsync = await caching.GetOrSetObjectFromCacheAsync(CacheKeyNameForAsync, 20, ReturnListOfStringAsync);```
 
 ## With parameters:
-```var lstStringFromAsync = await await caching.GetOrSetObjectFromCacheAsync(CacheKeyNameForAsync, 20, () => ReturnListOfStringAsync(param));```
+```var lstStringFromAsync = await caching.GetOrSetObjectFromCacheAsync(CacheKeyNameForAsync, 20, () => ReturnListOfStringAsync(param));```
 
 ## Sync:
 ```var lstString = caching.GetOrSetObjectFromCache(CacheKeyName, 20, ReturnListOfString);```
