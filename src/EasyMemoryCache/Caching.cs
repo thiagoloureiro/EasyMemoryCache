@@ -18,7 +18,7 @@ namespace EasyMemoryCache
             var cacheObj = _myCache.Get(cacheItemName);
 
             if (cacheObj != null)
-                 cachedObject = (T)cacheObj;
+                cachedObject = (T)cacheObj;
 
             if (cachedObject == null)
             {
@@ -30,28 +30,27 @@ namespace EasyMemoryCache
 
         public async Task<T> GetOrSetObjectFromCacheAsync<T>(string cacheItemName, int cacheTimeInMinutes, Func<Task<T>> objectSettingFunction)
         {
-            Console.WriteLine("get from cache");
             T cachedObject = default;
 
             var cacheObj = _myCache.Get(cacheItemName);
 
             if (cacheObj != null)
-                cachedObject = (T)cacheObj;
-
-            if (cachedObject.GetType() == typeof(DateTime))
             {
-                if ((DateTime)cacheObj == DateTime.MinValue)
+                cachedObject = (T)cacheObj;
+                if (cachedObject is DateTime)
                 {
-                    try
+                    if ((DateTime)cacheObj == DateTime.MinValue)
                     {
-                        cachedObject = await objectSettingFunction();
-                        _myCache.Set(cacheItemName, cachedObject, DateTimeOffset.Now.AddMinutes(cacheTimeInMinutes));
-
-                    }
-                    catch (Exception err)
-                    {
-                        Console.WriteLine(err.Message);
-                        return cachedObject;
+                        try
+                        {
+                            cachedObject = await objectSettingFunction();
+                            _myCache.Set(cacheItemName, cachedObject, DateTimeOffset.Now.AddMinutes(cacheTimeInMinutes));
+                        }
+                        catch (Exception err)
+                        {
+                            Console.WriteLine(err.Message);
+                            return cachedObject;
+                        }
                     }
                 }
             }
@@ -62,7 +61,6 @@ namespace EasyMemoryCache
                 {
                     cachedObject = await objectSettingFunction();
                     _myCache.Set(cacheItemName, cachedObject, DateTimeOffset.Now.AddMinutes(cacheTimeInMinutes));
-
                 }
                 catch (Exception err)
                 {
