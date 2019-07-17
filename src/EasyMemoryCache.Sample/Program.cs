@@ -40,7 +40,6 @@ namespace EasyMemoryCache.Sample
             Console.WriteLine(string.Join(",", lstStringCachedFromAsync));
             Console.WriteLine(string.Join(",", lstStringCached));
             Console.WriteLine(string.Join(",", lstStringCachedWithParamFromAsync));
-
         }
 
         private static ICaching SetupDI

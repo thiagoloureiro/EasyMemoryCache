@@ -13,7 +13,13 @@ namespace EasyMemoryCache
 
         public T GetOrSetObjectFromCache<T>(string cacheItemName, int cacheTimeInMinutes, Func<T> objectSettingFunction)
         {
-            var cachedObject = (T)_myCache.Get(cacheItemName);
+            T cachedObject = default;
+
+            var cacheObj = _myCache.Get(cacheItemName);
+
+            if (cacheObj != null)
+                 cachedObject = (T)cacheObj;
+
             if (cachedObject == null)
             {
                 cachedObject = objectSettingFunction();
