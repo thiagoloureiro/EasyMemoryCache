@@ -28,7 +28,7 @@ return caching;
 ```
 
 ## ASP.NET Core Example (Startup.cs)
-```services.AddSingleton<IReportService, ReportService>();```
+```services.AddSingleton<ICaching, Caching>();```
 ## Async:
 ```var lstStringFromAsync = await caching.GetOrSetObjectFromCacheAsync(CacheKeyNameForAsync, 20, ReturnListOfStringAsync);```
 
