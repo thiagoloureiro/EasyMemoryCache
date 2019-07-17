@@ -45,8 +45,9 @@ namespace EasyMemoryCache
                     _myCache.Set(cacheItemName, cachedObject, DateTimeOffset.Now.AddMinutes(cacheTimeInMinutes));
 
                 }
-                catch (Exception)
+                catch (Exception err)
                 {
+                    Console.WriteLine(err.Message);
                     return cachedObject;
                 }
             }
