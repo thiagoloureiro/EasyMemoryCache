@@ -30,12 +30,31 @@ namespace EasyMemoryCache
 
         public async Task<T> GetOrSetObjectFromCacheAsync<T>(string cacheItemName, int cacheTimeInMinutes, Func<Task<T>> objectSettingFunction)
         {
+            Console.WriteLine("get from cache");
             T cachedObject = default;
 
             var cacheObj = _myCache.Get(cacheItemName);
 
             if (cacheObj != null)
                 cachedObject = (T)cacheObj;
+
+            if (cachedObject.GetType() == typeof(DateTime))
+            {
+                if ((DateTime)cacheObj == DateTime.MinValue)
+                {
+                    try
+                    {
+                        cachedObject = await objectSettingFunction();
+                        _myCache.Set(cacheItemName, cachedObject, DateTimeOffset.Now.AddMinutes(cacheTimeInMinutes));
+
+                    }
+                    catch (Exception err)
+                    {
+                        Console.WriteLine(err.Message);
+                        return cachedObject;
+                    }
+                }
+            }
 
             if (cachedObject == null)
             {
