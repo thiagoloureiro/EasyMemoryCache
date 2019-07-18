@@ -20,7 +20,7 @@ namespace EasyMemoryCache
             if (cacheObj != null)
                 cachedObject = (T)cacheObj;
 
-            if (cachedObject == null)
+            if (cacheObj == null)
             {
                 cachedObject = objectSettingFunction();
                 _myCache.Set(cacheItemName, cachedObject, DateTimeOffset.Now.AddMinutes(cacheTimeInMinutes));
@@ -55,7 +55,7 @@ namespace EasyMemoryCache
                 }
             }
 
-            if (cachedObject == null)
+            if (cacheObj == null)
             {
                 try
                 {

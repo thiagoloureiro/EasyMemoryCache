@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using Xunit;
@@ -8,6 +9,61 @@ namespace EasyMemoryCache.Tests
     {
         private string CacheKeyName = "unitTestStringKey";
         private string CacheKeyName2 = "unitTestStringKey2";
+        private string CacheKeyTestDoubleKey = "CacheKeyTestDoubleKey";
+        private string CacheKeyTestIntegerKey = "CacheKeyTestIntegerKey";
+        private string CacheKeyTestDateTimeKey = "CacheKeyTestDateTimeKey";
+
+
+        [Fact]
+        public async Task should_return_datetime_without_parameters_async()
+        {
+            // Arrange
+            var caching = new Caching();
+
+            // Act
+            var ret = await caching.GetOrSetObjectFromCacheAsync(CacheKeyTestDateTimeKey, 20, GetDateTime);
+
+            // Assert
+            // Only for asserting purposes, no need to use GetValueFromCache, just use the GetOrSetObjectFromCacheAsync
+            var objectTask = caching.GetValueFromCache(CacheKeyTestDateTimeKey);
+            var value = (DateTime)objectTask;
+            Assert.Equal(value, GetDateTime().Result);
+            Assert.Equal(ret, GetDateTime().Result);
+        }
+
+        [Fact]
+        public async Task should_return_int_without_parameters_async()
+        {
+            // Arrange
+            var caching = new Caching();
+
+            // Act
+            var ret = await caching.GetOrSetObjectFromCacheAsync(CacheKeyTestIntegerKey, 20, GetInteger);
+
+            // Assert
+            // Only for asserting purposes, no need to use GetValueFromCache, just use the GetOrSetObjectFromCacheAsync
+            var objectTask = caching.GetValueFromCache(CacheKeyTestIntegerKey);
+            var value = (int)objectTask;
+            Assert.Equal(value, GetInteger().Result);
+            Assert.Equal(ret, GetInteger().Result);
+        }
+
+        [Fact]
+        public async Task should_return_double_without_parameters_async()
+        {
+            // Arrange
+            var caching = new Caching();
+
+            // Act
+            var ret = await caching.GetOrSetObjectFromCacheAsync(CacheKeyTestDoubleKey, 20, GetDouble);
+
+            // Assert
+            // Only for asserting purposes, no need to use GetValueFromCache, just use the GetOrSetObjectFromCacheAsync
+            var objectTask = caching.GetValueFromCache(CacheKeyTestDoubleKey);
+            var value = (double)objectTask;
+            Assert.Equal(value, GetDouble().Result);
+            Assert.Equal(ret, GetDouble().Result);
+        }
 
         [Fact]
         public async Task should_return_a_list_of_string_without_parameters_async()
@@ -97,6 +153,20 @@ namespace EasyMemoryCache.Tests
         private List<string> GenerateList()
         {
             return new List<string> { "foo", "bar", "easy", "caching" };
+        }
+
+        private Task<int> GetInteger()
+        {
+            return Task.FromResult(200);
+        }
+
+        private Task<double> GetDouble()
+        {
+            return Task.FromResult(200.55);
+        }
+        private Task<DateTime> GetDateTime()
+        {
+            return Task.FromResult(new DateTime(2019,01,01));
         }
     }
 }
