@@ -29,6 +29,16 @@ return caching;
 
 ## ASP.NET Core Example (Startup.cs)
 ```services.AddSingleton<ICaching, Caching>();```
+### Then inject the interface where do you want to use, example:
+```
+private readonly ICaching _caching;
+private string UserKeyCache => "UserKey";
+
+public UserService(ICaching caching)
+{
+     _caching = caching;
+}
+``` 
 ## Async:
 ```var lstStringFromAsync = await caching.GetOrSetObjectFromCacheAsync(CacheKeyNameForAsync, 20, ReturnListOfStringAsync);```
 
