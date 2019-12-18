@@ -13,7 +13,7 @@ Open Package Manager Console and run:
 ```Install-Package EasyMemoryCache```
 
 # Usage:
-First register the component as Singletion in your Application:
+First register the component as Singleton in your Application:
 
 ```.AddSingleton<ICaching, Caching>()```
 
