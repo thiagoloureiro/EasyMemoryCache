@@ -40,12 +40,12 @@ public UserService(ICaching caching)
 }
 ``` 
 ## Async:
-```var lstStringFromAsync = await caching.GetOrSetObjectFromCacheAsync(CacheKeyNameForAsync, 20, ReturnListOfStringAsync);```
+```var lstStringFromAsync = await _caching.GetOrSetObjectFromCacheAsync(CacheKeyNameForAsync, 20, ReturnListOfStringAsync);```
 
 ## With parameters:
-```var lstStringFromAsync = await caching.GetOrSetObjectFromCacheAsync(CacheKeyNameForAsync, 20, () => ReturnListOfStringAsync(param));```
+```var lstStringFromAsync = await _caching.GetOrSetObjectFromCacheAsync(CacheKeyNameForAsync, 20, () => ReturnListOfStringAsync(param));```
 
 ## Sync:
-```var lstString = caching.GetOrSetObjectFromCache(CacheKeyName, 20, ReturnListOfString);```
+```var lstString = _caching.GetOrSetObjectFromCache(CacheKeyName, 20, ReturnListOfString);```
 
 ## Check the code sample in src directory
