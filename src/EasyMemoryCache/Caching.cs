@@ -3,6 +3,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Reflection;
+using System.Threading;
 using System.Threading.Tasks;
 
 namespace EasyMemoryCache
@@ -10,9 +11,13 @@ namespace EasyMemoryCache
     public class Caching : ICaching, IDisposable
     {
         private readonly MemoryCache _myCache = new MemoryCache(new MemoryCacheOptions());
-
+        private readonly SemaphoreSlim _cacheLock = new SemaphoreSlim(1);
         public T GetOrSetObjectFromCache<T>(string cacheItemName, int cacheTimeInMinutes, Func<T> objectSettingFunction)
         {
+            lock (objectSettingFunction)
+            {
+                
+            }
             T cachedObject = default;
 
             var cacheObj = _myCache.Get(cacheItemName);
@@ -32,6 +37,7 @@ namespace EasyMemoryCache
         {
             T cachedObject = default;
 
+            await _cacheLock.WaitAsync();
             var cacheObj = _myCache.Get(cacheItemName);
 
             if (cacheObj != null)
@@ -44,11 +50,13 @@ namespace EasyMemoryCache
                         try
                         {
                             cachedObject = await objectSettingFunction();
-                            _myCache.Set(cacheItemName, cachedObject, DateTimeOffset.Now.AddMinutes(cacheTimeInMinutes));
+                            _myCache.Set(cacheItemName, cachedObject,
+                                DateTimeOffset.Now.AddMinutes(cacheTimeInMinutes));
                         }
                         catch (Exception err)
                         {
                             Console.WriteLine(err.Message);
+                            _cacheLock.Release();
                             return cachedObject;
                         }
                     }
@@ -65,9 +73,11 @@ namespace EasyMemoryCache
                 catch (Exception err)
                 {
                     Console.WriteLine(err.Message);
+                    _cacheLock.Release();
                     return cachedObject;
                 }
             }
+            _cacheLock.Release();
             return cachedObject;
         }
 
