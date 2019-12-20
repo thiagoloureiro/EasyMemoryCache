@@ -12,6 +12,7 @@ namespace EasyMemoryCache
     {
         private readonly MemoryCache _myCache = new MemoryCache(new MemoryCacheOptions());
         private readonly SemaphoreSlim _cacheLock = new SemaphoreSlim(1);
+
         public T GetOrSetObjectFromCache<T>(string cacheItemName, int cacheTimeInMinutes, Func<T> objectSettingFunction)
         {
             T cachedObject = default;
@@ -33,7 +34,7 @@ namespace EasyMemoryCache
         {
             T cachedObject = default;
 
-            await _cacheLock.WaitAsync();
+            await _cacheLock.WaitAsync().ConfigureAwait(false);
             var cacheObj = _myCache.Get(cacheItemName);
 
             if (cacheObj != null)
@@ -45,7 +46,7 @@ namespace EasyMemoryCache
                     {
                         try
                         {
-                            cachedObject = await objectSettingFunction();
+                            cachedObject = await objectSettingFunction().ConfigureAwait(false);
                             _myCache.Set(cacheItemName, cachedObject,
                                 DateTimeOffset.Now.AddMinutes(cacheTimeInMinutes));
                         }
@@ -63,7 +64,7 @@ namespace EasyMemoryCache
             {
                 try
                 {
-                    cachedObject = await objectSettingFunction();
+                    cachedObject = await objectSettingFunction().ConfigureAwait(false);
                     _myCache.Set(cacheItemName, cachedObject, DateTimeOffset.Now.AddMinutes(cacheTimeInMinutes));
                 }
                 catch (Exception err)
