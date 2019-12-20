@@ -14,10 +14,6 @@ namespace EasyMemoryCache
         private readonly SemaphoreSlim _cacheLock = new SemaphoreSlim(1);
         public T GetOrSetObjectFromCache<T>(string cacheItemName, int cacheTimeInMinutes, Func<T> objectSettingFunction)
         {
-            lock (objectSettingFunction)
-            {
-                
-            }
             T cachedObject = default;
 
             var cacheObj = _myCache.Get(cacheItemName);
