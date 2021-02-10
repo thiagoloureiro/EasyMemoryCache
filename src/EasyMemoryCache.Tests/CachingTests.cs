@@ -83,6 +83,40 @@ namespace EasyMemoryCache.Tests
         }
 
         [Fact]
+        public async Task should_notcache_empty_return_without_parameters_async()
+        {
+            // Arrange
+            var caching = new Caching();
+
+            // Act
+            var ret = await caching.GetOrSetObjectFromCacheAsync(CacheKeyName, 20, ReturnEmptyListAsync);
+
+            // Assert
+            // Only for asserting purposes, no need to use GetValueFromCache, just use the GetOrSetObjectFromCacheAsync
+            var objectTask = caching.GetValueFromCache(CacheKeyName);
+            var lst = (List<string>)objectTask;
+            Assert.Equal(lst, null);
+            Assert.Equal(ret, GenerateEmptyList());
+        }
+
+        [Fact]
+        public void should_notcache_empty_return_without_parameters_sync()
+        {
+            // Arrange
+            var caching = new Caching();
+
+            // Act
+            var ret = caching.GetOrSetObjectFromCache(CacheKeyName, 20, ReturnEmptyList);
+
+            // Assert
+            // Only for asserting purposes, no need to use GetValueFromCache, just use the GetOrSetObjectFromCacheAsync
+            var objectTask = caching.GetValueFromCache(CacheKeyName);
+            var lst = (List<string>)objectTask;
+            Assert.Equal(lst, null);
+            Assert.Equal(ret, GenerateEmptyList());
+        }
+
+        [Fact]
         public void should_return_a_list_of_string_without_parameters_sync()
         {
             // Arrange
@@ -140,6 +174,16 @@ namespace EasyMemoryCache.Tests
             Assert.Equal(lst2, GenerateList());
         }
 
+        private Task<List<string>> ReturnEmptyListAsync()
+        {
+            return Task.Run(GenerateEmptyList);
+        }
+
+        private List<string> ReturnEmptyList()
+        {
+            return GenerateEmptyList();
+        }
+
         private List<string> ReturnListOfString()
         {
             return GenerateList();
@@ -148,6 +192,11 @@ namespace EasyMemoryCache.Tests
         private Task<List<string>> ReturnListOfStringAsync()
         {
             return Task.Run(GenerateList);
+        }
+
+        private List<string> GenerateEmptyList()
+        {
+            return new List<string>();
         }
 
         private List<string> GenerateList()
@@ -166,7 +215,7 @@ namespace EasyMemoryCache.Tests
         }
         private Task<DateTime> GetDateTime()
         {
-            return Task.FromResult(new DateTime(2019,01,01));
+            return Task.FromResult(new DateTime(2019, 01, 01));
         }
     }
 }

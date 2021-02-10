@@ -12,11 +12,11 @@
 		<PackageProjectUrl>https://github.com/thiagoloureiro/EasyMemoryCache</PackageProjectUrl>
 		<Copyright>2021© Thiago Loureiro</Copyright>
 		<PackageLicenseFile>LICENSE</PackageLicenseFile>
-		<PackageReleaseNotes>Implemented SemaphoneSlim and Packages upgrade to .NET Core 3.1</PackageReleaseNotes>
+		<PackageReleaseNotes>Fix to not cache empty lists</PackageReleaseNotes>
 		<PackageIconUrl>https://raw.githubusercontent.com/thiagoloureiro/EasyMemoryCache/master/cacheicon.png</PackageIconUrl>
-		<Version>1.0.13</Version>
-		<AssemblyVersion>1.0.13.0</AssemblyVersion>
-		<FileVersion>1.0.13.0</FileVersion>
+		<Version>1.0.14</Version>
+		<AssemblyVersion>1.0.14.0</AssemblyVersion>
+		<FileVersion>1.0.14.0</FileVersion>
 		<PackageIconUrl>https://raw.githubusercontent.com/thiagoloureiro/EasyMemoryCache/master/cacheicon.png</PackageIconUrl>
 		<Icon>https://raw.githubusercontent.com/thiagoloureiro/EasyMemoryCache/master/cacheicon.png</Icon>
 	</PropertyGroup>

@@ -25,7 +25,19 @@ namespace EasyMemoryCache
             if (cacheObj == null)
             {
                 cachedObject = objectSettingFunction();
-                _myCache.Set(cacheItemName, cachedObject, DateTimeOffset.Now.AddMinutes(cacheTimeInMinutes));
+
+                var oType = cachedObject.GetType();
+                if (oType.IsGenericType && (oType.GetGenericTypeDefinition() == typeof(List<>)))
+                {
+                    if (((ICollection)cachedObject).Count > 0)
+                    {
+                        _myCache.Set(cacheItemName, cachedObject, DateTimeOffset.Now.AddMinutes(cacheTimeInMinutes));
+                    }
+                }
+                else
+                {
+                    _myCache.Set(cacheItemName, cachedObject, DateTimeOffset.Now.AddMinutes(cacheTimeInMinutes));
+                }
             }
             return cachedObject;
         }
@@ -65,7 +77,18 @@ namespace EasyMemoryCache
                 try
                 {
                     cachedObject = await objectSettingFunction().ConfigureAwait(false);
-                    _myCache.Set(cacheItemName, cachedObject, DateTimeOffset.Now.AddMinutes(cacheTimeInMinutes));
+
+                    var oType = cachedObject.GetType();
+
+                    if (oType.IsGenericType && (oType.GetGenericTypeDefinition() == typeof(List<>)))
+                    {
+                        if (((ICollection)cachedObject).Count > 0)
+                            _myCache.Set(cacheItemName, cachedObject, DateTimeOffset.Now.AddMinutes(cacheTimeInMinutes));
+                    }
+                    else
+                    {
+                        _myCache.Set(cacheItemName, cachedObject, DateTimeOffset.Now.AddMinutes(cacheTimeInMinutes));
+                    }
                 }
                 catch (Exception err)
                 {
