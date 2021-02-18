@@ -1,7 +1,7 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
 	<PropertyGroup>
-		<TargetFramework>netstandard2.1</TargetFramework>
+		<TargetFramework>netstandard2.0</TargetFramework>
 		<GeneratePackageOnBuild>true</GeneratePackageOnBuild>
 		<Authors>Thiago Loureiro</Authors>
 		<Product>EasyMemoryCache</Product>
@@ -14,9 +14,9 @@
 		<PackageLicenseFile>LICENSE</PackageLicenseFile>
 		<PackageReleaseNotes>Fix to not cache empty lists</PackageReleaseNotes>
 		<PackageIconUrl>https://raw.githubusercontent.com/thiagoloureiro/EasyMemoryCache/master/cacheicon.png</PackageIconUrl>
-		<Version>1.0.14</Version>
-		<AssemblyVersion>1.0.14.0</AssemblyVersion>
-		<FileVersion>1.0.14.0</FileVersion>
+		<Version>1.0.15</Version>
+		<AssemblyVersion>1.0.15.0</AssemblyVersion>
+		<FileVersion>1.0.15.0</FileVersion>
 		<PackageIconUrl>https://raw.githubusercontent.com/thiagoloureiro/EasyMemoryCache/master/cacheicon.png</PackageIconUrl>
 		<Icon>https://raw.githubusercontent.com/thiagoloureiro/EasyMemoryCache/master/cacheicon.png</Icon>
 	</PropertyGroup>
