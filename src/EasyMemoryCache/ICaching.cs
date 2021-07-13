@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Threading.Tasks;
 
 namespace EasyMemoryCache
@@ -16,5 +17,7 @@ namespace EasyMemoryCache
         void SetValueToCache(string key, object value, int cacheTimeInMinutes = 120);
 
         object GetValueFromCache(string key);
+
+        IEnumerable<string> GetKeys();
     }
 }

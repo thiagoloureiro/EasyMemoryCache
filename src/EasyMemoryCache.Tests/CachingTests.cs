@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 using Xunit;
 
@@ -12,7 +13,6 @@ namespace EasyMemoryCache.Tests
         private string CacheKeyTestDoubleKey = "CacheKeyTestDoubleKey";
         private string CacheKeyTestIntegerKey = "CacheKeyTestIntegerKey";
         private string CacheKeyTestDateTimeKey = "CacheKeyTestDateTimeKey";
-
 
         [Fact]
         public async Task should_return_datetime_without_parameters_async()
@@ -174,6 +174,22 @@ namespace EasyMemoryCache.Tests
             Assert.Equal(lst2, GenerateList());
         }
 
+        [Fact]
+        public async Task should_return_list_of_keys()
+        {
+            // Arrange
+            var caching = new Caching();
+            var ret = await caching.GetOrSetObjectFromCacheAsync(CacheKeyName, 20, ReturnListOfStringAsync);
+            var objectTask = caching.GetValueFromCache(CacheKeyName);
+            var lst = (List<string>)objectTask;
+
+            // Act
+            var keys = caching.GetKeys().ToList();
+
+            // Assert
+            Assert.True(keys.Count > 0);
+        }
+
         private Task<List<string>> ReturnEmptyListAsync()
         {
             return Task.Run(GenerateEmptyList);
@@ -213,6 +229,7 @@ namespace EasyMemoryCache.Tests
         {
             return Task.FromResult(200.55);
         }
+
         private Task<DateTime> GetDateTime()
         {
             return Task.FromResult(new DateTime(2019, 01, 01));

@@ -145,5 +145,10 @@ namespace EasyMemoryCache
         {
             _myCache?.Dispose();
         }
+
+        public IEnumerable<string> GetKeys()
+        {
+            return _myCache.GetKeys<string>();
+        }
     }
 }
