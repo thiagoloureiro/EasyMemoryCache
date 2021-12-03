@@ -150,5 +150,32 @@ namespace EasyMemoryCache
         {
             return _myCache.GetKeys<string>();
         }
+
+        public IEnumerable<DataContainer> GetData()
+        {
+            var items = new List<DataContainer>();
+            var field = typeof(MemoryCache).GetProperty("EntriesCollection", BindingFlags.NonPublic | BindingFlags.Instance);
+            if(field != null)
+            {
+                var collection = field.GetValue(_myCache) as ICollection;
+                if(collection != null)
+                {
+                    foreach(var item in collection)
+                    {
+                        var values = item.GetType().GetProperty("Value");
+                        if(values != null)
+                        {
+                            var entry = (ICacheEntry) values.GetValue(item);
+                            items.Add(new DataContainer(entry.Key.ToString(), entry.Size, entry.AbsoluteExpiration,
+                                entry.Priority));
+                        }
+                        
+                    }
+                }
+
+            }
+
+            return items;
+        }
     }
 }

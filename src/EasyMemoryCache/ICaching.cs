@@ -19,5 +19,7 @@ namespace EasyMemoryCache
         object GetValueFromCache(string key);
 
         IEnumerable<string> GetKeys();
+
+        IEnumerable<DataContainer> GetData();
     }
 }
