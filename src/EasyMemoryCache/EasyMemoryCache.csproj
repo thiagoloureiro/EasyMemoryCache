@@ -12,11 +12,11 @@
 		<PackageProjectUrl>https://github.com/thiagoloureiro/EasyMemoryCache</PackageProjectUrl>
 		<Copyright>2021© Thiago Loureiro</Copyright>
 		<PackageLicenseFile>LICENSE</PackageLicenseFile>
-		<PackageReleaseNotes>Included method to return list of keys</PackageReleaseNotes>
+		<PackageReleaseNotes>Included method to return list of keys (improved)</PackageReleaseNotes>
 		<PackageIconUrl>https://raw.githubusercontent.com/thiagoloureiro/EasyMemoryCache/master/cacheicon.png</PackageIconUrl>
-		<Version>1.0.16</Version>
-		<AssemblyVersion>1.0.16.0</AssemblyVersion>
-		<FileVersion>1.0.16.0</FileVersion>
+		<Version>1.0.17</Version>
+		<AssemblyVersion>1.0.17.0</AssemblyVersion>
+		<FileVersion>1.0.17.0</FileVersion>
 		<PackageIconUrl>https://raw.githubusercontent.com/thiagoloureiro/EasyMemoryCache/master/cacheicon.png</PackageIconUrl>
 		<Icon>https://raw.githubusercontent.com/thiagoloureiro/EasyMemoryCache/master/cacheicon.png</Icon>
 	</PropertyGroup>
