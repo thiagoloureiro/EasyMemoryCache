@@ -33,7 +33,7 @@ namespace EasyMemoryCache
                     {
                         _myCache.Set(cacheItemName, cachedObject, DateTimeOffset.Now.AddMinutes(cacheTimeInMinutes));
                     }
-                    else if (((ICollection)cachedObject).Count == 0 && cacheEmptyList)
+                    else if (cacheEmptyList)
                     {
                         _myCache.Set(cacheItemName, cachedObject, DateTimeOffset.Now.AddMinutes(cacheTimeInMinutes));
                     }
@@ -87,11 +87,13 @@ namespace EasyMemoryCache
                     if (oType.IsGenericType && (oType.GetGenericTypeDefinition() == typeof(List<>)))
                     {
                         if (((ICollection)cachedObject).Count > 0)
+                        {
                             _myCache.Set(cacheItemName, cachedObject, DateTimeOffset.Now.AddMinutes(cacheTimeInMinutes));
-                    }
-                    else
-                    {
-                        _myCache.Set(cacheItemName, cachedObject, DateTimeOffset.Now.AddMinutes(cacheTimeInMinutes));
+                        }
+                        else if (cacheEmptyList)
+                        {
+                            _myCache.Set(cacheItemName, cachedObject, DateTimeOffset.Now.AddMinutes(cacheTimeInMinutes));
+                        }
                     }
                 }
                 catch (Exception err)
