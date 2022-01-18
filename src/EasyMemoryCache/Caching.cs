@@ -13,7 +13,7 @@ namespace EasyMemoryCache
         private readonly MemoryCache _myCache = new MemoryCache(new MemoryCacheOptions());
         private readonly SemaphoreSlim _cacheLock = new SemaphoreSlim(1);
 
-        public T GetOrSetObjectFromCache<T>(string cacheItemName, int cacheTimeInMinutes, Func<T> objectSettingFunction)
+        public T GetOrSetObjectFromCache<T>(string cacheItemName, int cacheTimeInMinutes, Func<T> objectSettingFunction, bool cacheEmptyList = false)
         {
             T cachedObject = default;
 
@@ -33,6 +33,10 @@ namespace EasyMemoryCache
                     {
                         _myCache.Set(cacheItemName, cachedObject, DateTimeOffset.Now.AddMinutes(cacheTimeInMinutes));
                     }
+                    else if (((ICollection)cachedObject).Count == 0 && cacheEmptyList)
+                    {
+                        _myCache.Set(cacheItemName, cachedObject, DateTimeOffset.Now.AddMinutes(cacheTimeInMinutes));
+                    }
                 }
                 else
                 {
@@ -42,7 +46,7 @@ namespace EasyMemoryCache
             return cachedObject;
         }
 
-        public async Task<T> GetOrSetObjectFromCacheAsync<T>(string cacheItemName, int cacheTimeInMinutes, Func<Task<T>> objectSettingFunction)
+        public async Task<T> GetOrSetObjectFromCacheAsync<T>(string cacheItemName, int cacheTimeInMinutes, Func<Task<T>> objectSettingFunction, bool cacheEmptyList = false)
         {
             T cachedObject = default;
 
@@ -155,24 +159,22 @@ namespace EasyMemoryCache
         {
             var items = new List<DataContainer>();
             var field = typeof(MemoryCache).GetProperty("EntriesCollection", BindingFlags.NonPublic | BindingFlags.Instance);
-            if(field != null)
+            if (field != null)
             {
                 var collection = field.GetValue(_myCache) as ICollection;
-                if(collection != null)
+                if (collection != null)
                 {
-                    foreach(var item in collection)
+                    foreach (var item in collection)
                     {
                         var values = item.GetType().GetProperty("Value");
-                        if(values != null)
+                        if (values != null)
                         {
-                            var entry = (ICacheEntry) values.GetValue(item);
+                            var entry = (ICacheEntry)values.GetValue(item);
                             items.Add(new DataContainer(entry.Key.ToString(), entry.Size, entry.AbsoluteExpiration,
                                 entry.Priority));
                         }
-                        
                     }
                 }
-
             }
 
             return items;

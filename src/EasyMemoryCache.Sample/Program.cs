@@ -20,6 +20,10 @@ namespace EasyMemoryCache.Sample
             Console.WriteLine("Caching Lists");
             Console.WriteLine("--------------");
 
+            var emptyLst = GenerateEmptyList();
+
+            var lstEmpty = caching.GetOrSetObjectFromCache("EmptyList", 10, GenerateEmptyList, true);
+
             var lstStringFromAsync = await caching.GetOrSetObjectFromCacheAsync(CacheKeyNameForAsync, 20, ReturnListOfStringAsync);
             var lstString = caching.GetOrSetObjectFromCache(CacheKeyName, 20, ReturnListOfString);
             var lstStringWithParamFromAsync = await caching.GetOrSetObjectFromCacheAsync(CacheKeyNameWithParamForAsync, 20, () => ReturnListOfStringAsync("EasyMemoryCache"));
@@ -28,10 +32,11 @@ namespace EasyMemoryCache.Sample
             Console.WriteLine(string.Join(",", lstString));
             Console.WriteLine(string.Join(",", lstStringWithParamFromAsync));
 
-
             var lstStringCachedFromAsync = await caching.GetOrSetObjectFromCacheAsync(CacheKeyNameForAsync, 20, ReturnListOfStringAsync);
             var lstStringCached = caching.GetOrSetObjectFromCache(CacheKeyName, 20, ReturnListOfString);
             var lstStringCachedWithParamFromAsync = await caching.GetOrSetObjectFromCacheAsync(CacheKeyNameWithParamForAsync, 20, () => ReturnListOfStringAsync("EasyMemoryCache"));
+
+            var lstEmptyCached = caching.GetOrSetObjectFromCache("EmptyList", 10, GenerateEmptyList);
 
             Console.WriteLine("-----------------------------------------------------------------");
             Console.WriteLine("From Cache, you can notice now GenerateList method isn't called");
@@ -75,6 +80,12 @@ namespace EasyMemoryCache.Sample
         {
             Console.WriteLine("Generating the list...");
             return new List<string> { "foo", "bar", "easy", "caching" };
+        }
+
+        private static List<string> GenerateEmptyList()
+        {
+            Console.WriteLine("Generating empty list...");
+            return new List<string> { };
         }
 
         private static List<string> GenerateListParam(string param)
