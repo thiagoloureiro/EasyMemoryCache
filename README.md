@@ -4,7 +4,7 @@
 [![Build history](https://buildstats.info/appveyor/chart/thiagoloureiro/easymemorycache)](https://ci.appveyor.com/project/thiagoloureiro/easymemorycache/history)
 
 [![NuGet](https://buildstats.info/nuget/EasyMemoryCache)](http://www.nuget.org/packages/EasyMemoryCache)
-![](https://img.shields.io/appveyor/tests/thiagoloureiro/easymemorycache.svg)
+![](https://img.shields.io/appveyor/tests/thiagoloureiro/easymemorycache)
 #### .NET Component to easily implement MemoryCache (sync and async) for your .NET Core Application
 
 # How to Use:
