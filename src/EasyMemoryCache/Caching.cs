@@ -95,6 +95,10 @@ namespace EasyMemoryCache
                             _myCache.Set(cacheItemName, cachedObject, DateTimeOffset.Now.AddMinutes(cacheTimeInMinutes));
                         }
                     }
+                    else
+                    {
+                        _myCache.Set(cacheItemName, cachedObject, DateTimeOffset.Now.AddMinutes(cacheTimeInMinutes));
+                    }
                 }
                 catch (Exception err)
                 {
