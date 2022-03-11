@@ -15,10 +15,10 @@ namespace EasyMemoryCache
         private readonly SemaphoreSlim _cacheLock = new SemaphoreSlim(1);
 
         private readonly Lazy<ConnectionMultiplexer> LazyRedisConnection = new Lazy<ConnectionMultiplexer>(() =>
-                                                                                                                              {
-                                                                                                                                  string cacheConnection = "localhost,allowAdmin=true";
-                                                                                                                                  return ConnectionMultiplexer.Connect(cacheConnection);
-                                                                                                                              });
+                                                                                                                                                        {
+                                                                                                                                                            string cacheConnection = "localhost,allowAdmin=true";
+                                                                                                                                                            return ConnectionMultiplexer.Connect(cacheConnection);
+                                                                                                                                                        });
 
         public RedisCacheManager()
         {
@@ -52,6 +52,11 @@ namespace EasyMemoryCache
                 return default;
         }
 
+        /// <summary>
+        /// Only available for MemoryCache
+        /// </summary>
+        /// <returns></returns>
+        /// <exception cref="NotImplementedException"></exception>
         public IEnumerable<DataContainer> GetData()
         {
             throw new NotImplementedException();
@@ -71,7 +76,20 @@ namespace EasyMemoryCache
 
         public T GetOrSetObjectFromCache<T>(string cacheItemName, int cacheTimeInMinutes, Func<T> objectSettingFunction, bool cacheEmptyList = false)
         {
-            throw new NotImplementedException();
+            T cachedObject = default;
+
+            var cacheObj = _cache.StringGet(cacheItemName);
+
+            if (cacheObj.HasValue)
+                cachedObject = JsonConvert.DeserializeObject<T>(_cache.StringGet(cacheItemName));
+
+            if (cacheObj.IsNull)
+            {
+                cachedObject = objectSettingFunction();
+
+                _cache.StringSet(cacheItemName, JsonConvert.SerializeObject(cachedObject), TimeSpan.FromMinutes(cacheTimeInMinutes));
+            }
+            return cachedObject;
         }
 
         public async Task<T> GetOrSetObjectFromCacheAsync<T>(string cacheItemName, int cacheTimeInMinutes, Func<Task<T>> objectSettingFunction, bool cacheEmptyList = false)
@@ -130,20 +148,10 @@ namespace EasyMemoryCache
             await _server.FlushAllDatabasesAsync();
         }
 
-        public void Remove(string key)
-        {
-            _cache.KeyDelete(key);
-        }
-
-        public async Task RemoveAsync(string key)
-        {
-            await _cache.KeyDeleteAsync(key).ConfigureAwait(false);
-        }
-
         public void SetValueToCache<T>(string key, T value, int cacheTimeInMinutes = 120)
         {
             if (CheckIfKeyExists(key))
-                Remove(key);
+                Invalidate(key);
             _cache.StringSet(key, JsonConvert.SerializeObject(value));
             _cache.KeyExpire(key, TimeSpan.FromMinutes(cacheTimeInMinutes));
         }
@@ -151,7 +159,7 @@ namespace EasyMemoryCache
         public void SetValuesToCache<T>(string key, List<T> value, int cacheTimeInMinutes = 120)
         {
             if (CheckIfKeyExists(key))
-                Remove(key);
+                Invalidate(key);
             _cache.StringSet(key, JsonConvert.SerializeObject(value));
             _cache.KeyExpire(key, TimeSpan.FromMinutes(cacheTimeInMinutes));
         }
