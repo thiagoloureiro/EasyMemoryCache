@@ -141,14 +141,14 @@ namespace EasyMemoryCache
             }
         }
 
-        public void SetValueToCache(string key, object value, int cacheTimeInMinutes = 120)
+        public void SetValueToCache<T>(string key, T value, int cacheTimeInMinutes = 120)
         {
             _myCache.Set(key, value, DateTimeOffset.Now.AddMinutes(cacheTimeInMinutes));
         }
 
-        public object GetValueFromCache(string key)
+        public T GetValueFromCache<T>(string key)
         {
-            return _myCache.Get(key);
+            return _myCache.Get<T>(key);
         }
 
         public void Dispose()
@@ -184,6 +184,16 @@ namespace EasyMemoryCache
             }
 
             return items;
+        }
+
+        public async Task InvalidateAllAsync()
+        {
+            InvalidateAll();
+        }
+
+        public async Task InvalidateAsync(string key)
+        {
+            await Task.Run(() => _myCache.Remove(key));
         }
     }
 }

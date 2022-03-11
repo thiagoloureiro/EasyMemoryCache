@@ -9,6 +9,16 @@ namespace EasyMemoryCache.Sample
     {
         private static async Task Main(string[] args)
         {
+            // Redis Testing
+            var test = new RedisCacheManager();
+            test.SetValueToCache("test", "value", 10);
+            var exists = test.CheckIfKeyExists("test");
+            var value = test.GetValueFromCache<string>("test");
+            test.InvalidateAll();
+            var exists1 = test.CheckIfKeyExists("test");
+
+            // End of Redis Testing
+
             var CacheKeyNameForAsync = "unitTestStringKeyAsync";
             var CacheKeyNameWithParamForAsync = "unitTestStringKeyWithParamAsync";
 

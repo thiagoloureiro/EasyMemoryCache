@@ -25,7 +25,7 @@ namespace EasyMemoryCache.Tests
 
             // Assert
             // Only for asserting purposes, no need to use GetValueFromCache, just use the GetOrSetObjectFromCacheAsync
-            var objectTask = caching.GetValueFromCache(CacheKeyTestDateTimeKey);
+            var objectTask = caching.GetValueFromCache<DateTime>(CacheKeyTestDateTimeKey);
             var value = (DateTime)objectTask;
             Assert.Equal(value, GetDateTime().Result);
             Assert.Equal(ret, GetDateTime().Result);
@@ -42,7 +42,7 @@ namespace EasyMemoryCache.Tests
 
             // Assert
             // Only for asserting purposes, no need to use GetValueFromCache, just use the GetOrSetObjectFromCacheAsync
-            var objectTask = caching.GetValueFromCache(CacheKeyTestIntegerKey);
+            var objectTask = caching.GetValueFromCache<int>(CacheKeyTestIntegerKey);
             var value = (int)objectTask;
             Assert.Equal(value, GetInteger().Result);
             Assert.Equal(ret, GetInteger().Result);
@@ -59,7 +59,7 @@ namespace EasyMemoryCache.Tests
 
             // Assert
             // Only for asserting purposes, no need to use GetValueFromCache, just use the GetOrSetObjectFromCacheAsync
-            var objectTask = caching.GetValueFromCache(CacheKeyTestDoubleKey);
+            var objectTask = caching.GetValueFromCache<Double>(CacheKeyTestDoubleKey);
             var value = (double)objectTask;
             Assert.Equal(value, GetDouble().Result);
             Assert.Equal(ret, GetDouble().Result);
@@ -76,7 +76,7 @@ namespace EasyMemoryCache.Tests
 
             // Assert
             // Only for asserting purposes, no need to use GetValueFromCache, just use the GetOrSetObjectFromCacheAsync
-            var objectTask = caching.GetValueFromCache(CacheKeyName);
+            var objectTask = caching.GetValueFromCache<List<string>>(CacheKeyName);
             var lst = (List<string>)objectTask;
             Assert.Equal(lst, GenerateList());
             Assert.Equal(ret, GenerateList());
@@ -93,7 +93,7 @@ namespace EasyMemoryCache.Tests
 
             // Assert
             // Only for asserting purposes, no need to use GetValueFromCache, just use the GetOrSetObjectFromCacheAsync
-            var objectTask = caching.GetValueFromCache(CacheKeyName);
+            var objectTask = caching.GetValueFromCache<List<string>>(CacheKeyName);
             var lst = (List<string>)objectTask;
             Assert.Equal(lst, null);
             Assert.Equal(ret, GenerateEmptyList());
@@ -110,7 +110,7 @@ namespace EasyMemoryCache.Tests
 
             // Assert
             // Only for asserting purposes, no need to use GetValueFromCache, just use the GetOrSetObjectFromCacheAsync
-            var objectTask = caching.GetValueFromCache(CacheKeyName);
+            var objectTask = caching.GetValueFromCache<List<string>>(CacheKeyName);
             var lst = (List<string>)objectTask;
             Assert.Equal(lst, null);
             Assert.Equal(ret, GenerateEmptyList());
@@ -127,7 +127,7 @@ namespace EasyMemoryCache.Tests
 
             // Assert
             // Only for asserting purposes, no need to use GetValueFromCache, just use the GetOrSetObjectFromCacheAsync
-            var objFromCache = caching.GetValueFromCache(CacheKeyName);
+            var objFromCache = caching.GetValueFromCache<List<string>>(CacheKeyName);
             var lst = (List<string>)objFromCache;
             Assert.Equal(lst, GenerateList());
             Assert.Equal(ret, GenerateList());
@@ -145,7 +145,7 @@ namespace EasyMemoryCache.Tests
 
             // Assert
             // Only for asserting purposes, no need to use GetValueFromCache, just use the GetOrSetObjectFromCacheAsync
-            var objFromCache = caching.GetValueFromCache(CacheKeyName);
+            var objFromCache = caching.GetValueFromCache<List<string>>(CacheKeyName);
             var lst = (List<string>)objFromCache;
             Assert.Null(lst);
         }
@@ -164,10 +164,10 @@ namespace EasyMemoryCache.Tests
 
             // Assert
             // Only for asserting purposes, no need to use GetValueFromCache, just use the GetOrSetObjectFromCacheAsync
-            var objFromCache = caching.GetValueFromCache(CacheKeyName);
+            var objFromCache = caching.GetValueFromCache<List<string>>(CacheKeyName);
             var lst = (List<string>)objFromCache;
 
-            var objFromCache2 = caching.GetValueFromCache(CacheKeyName2);
+            var objFromCache2 = caching.GetValueFromCache<List<string>>(CacheKeyName2);
             var lst2 = (List<string>)objFromCache2;
 
             Assert.Null(lst);
@@ -180,7 +180,7 @@ namespace EasyMemoryCache.Tests
             // Arrange
             var caching = new Caching();
             var ret = await caching.GetOrSetObjectFromCacheAsync(CacheKeyName, 20, ReturnListOfStringAsync);
-            var objectTask = caching.GetValueFromCache(CacheKeyName);
+            var objectTask = caching.GetValueFromCache<List<string>>(CacheKeyName);
             var lst = (List<string>)objectTask;
 
             // Act
@@ -196,7 +196,7 @@ namespace EasyMemoryCache.Tests
             // Arrange
             var caching = new Caching();
             var ret = await caching.GetOrSetObjectFromCacheAsync(CacheKeyName, 20, ReturnListOfStringAsync);
-            var objectTask = caching.GetValueFromCache(CacheKeyName);
+            var objectTask = caching.GetValueFromCache<List<string>>(CacheKeyName);
             var lst = (List<string>)objectTask;
 
             // Act
@@ -204,6 +204,22 @@ namespace EasyMemoryCache.Tests
 
             // Assert
             Assert.True(keys.Count > 0);
+        }
+
+        [Fact]
+        public async Task should_set_and_get_value_from_cache()
+        {
+            // Arrange
+            var caching = new Caching();
+            var key = "key";
+            var value = "value";
+
+            // Act
+            caching.SetValueToCache(key, value, 10);
+            var cachedValue = caching.GetValueFromCache<string>(key);
+
+            // Assert
+            Assert.True(value == cachedValue);
         }
 
         private Task<List<string>> ReturnEmptyListAsync()
