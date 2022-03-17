@@ -5,7 +5,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
 
-namespace EasyMemoryCache
+namespace EasyMemoryCache.Extensions
 {
     public static class MemoryCacheExtensions
     {

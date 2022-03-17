@@ -2,6 +2,7 @@
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
+using EasyMemoryCache.Configuration;
 
 namespace EasyMemoryCache.Sample
 {
@@ -53,7 +54,10 @@ namespace EasyMemoryCache.Sample
             {
                 //setup our DI
                 var serviceProvider = new ServiceCollection()
-                    .AddSingleton<ICaching, Caching>()
+                    .AddEasyCache(new CacheSettings()
+                    {
+                        IsDistributed = false
+                    })
                     .BuildServiceProvider();
 
                 var caching = serviceProvider.GetService<ICaching>();

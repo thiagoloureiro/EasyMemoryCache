@@ -95,7 +95,7 @@ namespace EasyMemoryCache.Tests
             // Only for asserting purposes, no need to use GetValueFromCache, just use the GetOrSetObjectFromCacheAsync
             var objectTask = caching.GetValueFromCache(CacheKeyName);
             var lst = (List<string>)objectTask;
-            Assert.Equal(lst, null);
+            Assert.Null(lst);
             Assert.Equal(ret, GenerateEmptyList());
         }
 
@@ -112,7 +112,7 @@ namespace EasyMemoryCache.Tests
             // Only for asserting purposes, no need to use GetValueFromCache, just use the GetOrSetObjectFromCacheAsync
             var objectTask = caching.GetValueFromCache(CacheKeyName);
             var lst = (List<string>)objectTask;
-            Assert.Equal(lst, null);
+            Assert.Null(lst);
             Assert.Equal(ret, GenerateEmptyList());
         }
 

@@ -5,13 +5,26 @@ using System.Collections.Generic;
 using System.Reflection;
 using System.Threading;
 using System.Threading.Tasks;
+using EasyMemoryCache.Extensions;
+using Microsoft.Extensions.DependencyInjection;
 
 namespace EasyMemoryCache
 {
     public class Caching : ICaching, IDisposable
     {
-        private readonly MemoryCache _myCache = new MemoryCache(new MemoryCacheOptions());
+        private readonly MemoryCache _myCache;
         private readonly SemaphoreSlim _cacheLock = new SemaphoreSlim(1);
+
+        public Caching() : this(new MemoryCache(new MemoryCacheOptions()))
+        {
+
+        }
+
+        [ActivatorUtilitiesConstructor]
+        public Caching(IMemoryCache cache)
+        {
+            _myCache = (MemoryCache)cache;
+        }
 
         public T GetOrSetObjectFromCache<T>(string cacheItemName, int cacheTimeInMinutes, Func<T> objectSettingFunction, bool cacheEmptyList = false)
         {
