@@ -13,14 +13,18 @@ Open Package Manager Console and run:
 ```Install-Package EasyMemoryCache```
 
 # Usage:
-First register the component as Singleton in your Application:
+First register the component in your Application:
 
-```.AddSingleton<ICaching, Caching>()```
+```C#
+.AddEasyCache(new CacheSettings() { ... })
+```
 
 ## .NET Core Console Example
-```//setup our DI
+
+```C#
+//setup our DI
 var serviceProvider = new ServiceCollection()
-    .AddSingleton<ICaching, Caching>()
+    .AddEasyCache(new CacheSettings() { ... })
     .BuildServiceProvider();
 
 var caching = serviceProvider.GetService<ICaching>();
@@ -28,9 +32,28 @@ return caching;
 ```
 
 ## ASP.NET Core Example (Startup.cs)
-```services.AddSingleton<ICaching, Caching>();```
-### Then inject the interface where do you want to use, example:
+
+```C#
+services.AddEasyCache(Configuration.GetSection("CacheSettings").Get<CacheSettings>());
 ```
+
+### Configuration example:
+```json
+"CacheSettings": {
+    "IsDistributed": true,
+    "RedisConnectionString": "host:port",
+    "RedisPassword": "Optional password"
+  }
+```
+For:
+```json
+ "IsDistributed": false
+```
+InMemory cache will be used instead of Redis
+
+
+### Then inject the interface where do you want to use, example:
+```C#
 private readonly ICaching _caching;
 private string UserKeyCache => "UserKey";
 
@@ -40,12 +63,18 @@ public UserService(ICaching caching)
 }
 ``` 
 ## Async:
-```var lstStringFromAsync = await _caching.GetOrSetObjectFromCacheAsync(CacheKeyNameForAsync, 20, ReturnListOfStringAsync);```
+```C#
+var lstStringFromAsync = await _caching.GetOrSetObjectFromCacheAsync(CacheKeyNameForAsync, 20, ReturnListOfStringAsync);
+```
 
 ## With parameters:
-```var lstStringFromAsync = await _caching.GetOrSetObjectFromCacheAsync(CacheKeyNameForAsync, 20, () => ReturnListOfStringAsync(param));```
+```C#
+var lstStringFromAsync = await _caching.GetOrSetObjectFromCacheAsync(CacheKeyNameForAsync, 20, () => ReturnListOfStringAsync(param));
+```
 
 ## Sync:
-```var lstString = _caching.GetOrSetObjectFromCache(CacheKeyName, 20, ReturnListOfString);```
+```C#
+var lstString = _caching.GetOrSetObjectFromCache(CacheKeyName, 20, ReturnListOfString);
+```
 
 ## Check the code sample in src directory
