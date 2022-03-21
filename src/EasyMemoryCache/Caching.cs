@@ -3,7 +3,6 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Reflection;
-using System.Threading;
 using System.Threading.Tasks;
 using EasyMemoryCache.Extensions;
 using Microsoft.Extensions.DependencyInjection;
@@ -13,7 +12,7 @@ namespace EasyMemoryCache
     public class Caching : ICaching, IDisposable
     {
         private readonly MemoryCache _myCache;
-        private readonly SemaphoreSlim _cacheLock = new SemaphoreSlim(1);
+        private readonly NamedSemaphoreSlim _cacheLock = new NamedSemaphoreSlim(1);
 
         public Caching() : this(new MemoryCache(new MemoryCacheOptions()))
         {
@@ -37,24 +36,42 @@ namespace EasyMemoryCache
 
             if (cacheObj == null)
             {
-                cachedObject = objectSettingFunction();
+                _cacheLock[cacheItemName].Wait();
 
-                var oType = cachedObject.GetType();
-                if (oType.IsGenericType && (oType.GetGenericTypeDefinition() == typeof(List<>)))
+                try
                 {
-                    if (((ICollection)cachedObject).Count > 0)
+                    cachedObject = objectSettingFunction();
+
+                    var oType = cachedObject.GetType();
+                    if (oType.IsGenericType && (oType.GetGenericTypeDefinition() == typeof(List<>)))
+                    {
+                        if (((ICollection)cachedObject).Count > 0)
+                        {
+                            _myCache.Set(cacheItemName, cachedObject,
+                                DateTimeOffset.Now.AddMinutes(cacheTimeInMinutes));
+                        }
+                        else if (cacheEmptyList)
+                        {
+                            _myCache.Set(cacheItemName, cachedObject,
+                                DateTimeOffset.Now.AddMinutes(cacheTimeInMinutes));
+                        }
+                    }
+                    else
                     {
                         _myCache.Set(cacheItemName, cachedObject, DateTimeOffset.Now.AddMinutes(cacheTimeInMinutes));
                     }
-                    else if (cacheEmptyList)
-                    {
-                        _myCache.Set(cacheItemName, cachedObject, DateTimeOffset.Now.AddMinutes(cacheTimeInMinutes));
-                    }
+
                 }
-                else
+                catch (Exception err)
                 {
-                    _myCache.Set(cacheItemName, cachedObject, DateTimeOffset.Now.AddMinutes(cacheTimeInMinutes));
+                    Console.WriteLine(err.Message);
+                    return cachedObject;
                 }
+                finally
+                {
+                    _cacheLock[cacheItemName].Release();
+                }
+                
             }
             return cachedObject;
         }
@@ -62,35 +79,11 @@ namespace EasyMemoryCache
         public async Task<T> GetOrSetObjectFromCacheAsync<T>(string cacheItemName, int cacheTimeInMinutes, Func<Task<T>> objectSettingFunction, bool cacheEmptyList = false)
         {
             T cachedObject = default;
-
-            await _cacheLock.WaitAsync().ConfigureAwait(false);
             var cacheObj = _myCache.Get(cacheItemName);
 
-            if (cacheObj != null)
+            if (cacheObj == null || EqualityComparer<T>.Default.Equals(cachedObject, default))
             {
-                cachedObject = (T)cacheObj;
-                if (cachedObject is DateTime)
-                {
-                    if ((DateTime)cacheObj == DateTime.MinValue)
-                    {
-                        try
-                        {
-                            cachedObject = await objectSettingFunction().ConfigureAwait(false);
-                            _myCache.Set(cacheItemName, cachedObject,
-                                DateTimeOffset.Now.AddMinutes(cacheTimeInMinutes));
-                        }
-                        catch (Exception err)
-                        {
-                            Console.WriteLine(err.Message);
-                            _cacheLock.Release();
-                            return cachedObject;
-                        }
-                    }
-                }
-            }
-
-            if (cacheObj == null)
-            {
+                await _cacheLock[cacheItemName].WaitAsync().ConfigureAwait(false);
                 try
                 {
                     cachedObject = await objectSettingFunction().ConfigureAwait(false);
@@ -101,11 +94,13 @@ namespace EasyMemoryCache
                     {
                         if (((ICollection)cachedObject).Count > 0)
                         {
-                            _myCache.Set(cacheItemName, cachedObject, DateTimeOffset.Now.AddMinutes(cacheTimeInMinutes));
+                            _myCache.Set(cacheItemName, cachedObject,
+                                DateTimeOffset.Now.AddMinutes(cacheTimeInMinutes));
                         }
                         else if (cacheEmptyList)
                         {
-                            _myCache.Set(cacheItemName, cachedObject, DateTimeOffset.Now.AddMinutes(cacheTimeInMinutes));
+                            _myCache.Set(cacheItemName, cachedObject,
+                                DateTimeOffset.Now.AddMinutes(cacheTimeInMinutes));
                         }
                     }
                     else
@@ -116,11 +111,13 @@ namespace EasyMemoryCache
                 catch (Exception err)
                 {
                     Console.WriteLine(err.Message);
-                    _cacheLock.Release();
                     return cachedObject;
                 }
+                finally
+                {
+                    _cacheLock[cacheItemName].Release();
+                }
             }
-            _cacheLock.Release();
             return cachedObject;
         }
 
@@ -167,6 +164,7 @@ namespace EasyMemoryCache
         public void Dispose()
         {
             _myCache?.Dispose();
+            _cacheLock?.Dispose();
         }
 
         public IEnumerable<string> GetKeys()
