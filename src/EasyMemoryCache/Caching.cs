@@ -29,12 +29,12 @@ namespace EasyMemoryCache
         {
             T cachedObject = default;
 
-            var cacheObj = _myCache.Get(cacheItemName);
+            var data = _myCache.Get(cacheItemName);
 
-            if (cacheObj != null)
-                cachedObject = (T)cacheObj;
+            if (data != null)
+                cachedObject = (T)data;
 
-            if (cacheObj == null)
+            if (data == null)
             {
                 _cacheLock[cacheItemName].Wait();
 
@@ -80,6 +80,9 @@ namespace EasyMemoryCache
         {
             T cachedObject = default;
             var cacheObj = _myCache.Get(cacheItemName);
+
+            if (cacheObj != null)
+                cachedObject = (T)cacheObj;
 
             if (cacheObj == null || EqualityComparer<T>.Default.Equals(cachedObject, default))
             {

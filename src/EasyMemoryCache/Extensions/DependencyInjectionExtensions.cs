@@ -1,5 +1,6 @@
 ﻿using System;
 using EasyMemoryCache;
+using EasyMemoryCache.Accessors;
 using EasyMemoryCache.Configuration;
 using StackExchange.Redis;
 
@@ -28,6 +29,16 @@ namespace Microsoft.Extensions.DependencyInjection
             {
                 options.ConfigurationOptions = configurationOptions;
             });
+
+            switch (settings.RedisSerialization)
+            {
+                case SerializationType.Protobuf:
+                    services.AddSingleton<CacheAccessor, ProtobufCacheAccessor>();
+                    break;
+                default:
+                    services.AddSingleton<CacheAccessor, NewtonsoftCacheAccessor>();
+                    break;
+            }
 
             services.AddSingleton<ICaching, RedisCaching>();
             services.AddSingleton(sp =>
