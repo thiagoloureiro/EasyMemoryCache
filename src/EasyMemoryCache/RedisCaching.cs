@@ -113,6 +113,11 @@ namespace EasyMemoryCache
             return _cacheAccessor.Get(key);
         }
 
+        public T GetValueFromCache<T>(string key)
+        {
+            return _cacheAccessor.Get<T>(key);
+        }
+
         public void Dispose()
         {
             _cacheAccessor.Dispose();
