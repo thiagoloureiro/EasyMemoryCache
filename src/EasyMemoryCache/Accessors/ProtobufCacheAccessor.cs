@@ -15,16 +15,7 @@ namespace EasyMemoryCache.Accessors
 
         public override object Get(string key)
         {
-            var data = Cache.Get(key);
-            if (data == null)
-            {
-                return null;
-            }
-
-            using (var stream = new MemoryStream(data))
-            {
-                return Serializer.Deserialize<object>(stream);
-            }
+            throw new NotImplementedException("Protobuf requires to know type in advance. Please use generic version of the method instead");
         }
 
         public override T Get<T>(string key)
