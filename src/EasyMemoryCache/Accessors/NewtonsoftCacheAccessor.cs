@@ -1,7 +1,6 @@
-﻿using System;
-using System.Threading.Tasks;
-using Microsoft.Extensions.Caching.Distributed;
+﻿using Microsoft.Extensions.Caching.Distributed;
 using Newtonsoft.Json;
+using System.Threading.Tasks;
 
 namespace EasyMemoryCache.Accessors
 {
@@ -9,7 +8,6 @@ namespace EasyMemoryCache.Accessors
     {
         public NewtonsoftCacheAccessor(IDistributedCache cache) : base(cache)
         {
-            
         }
 
         public override object Get(string key)

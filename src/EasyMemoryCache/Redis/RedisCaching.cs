@@ -1,12 +1,12 @@
-﻿using System;
+﻿using EasyMemoryCache.Accessors;
+using StackExchange.Redis;
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using EasyMemoryCache.Accessors;
-using StackExchange.Redis;
 
-namespace EasyMemoryCache
+namespace EasyMemoryCache.Redis
 {
     public class RedisCaching : ICaching, IDisposable
     {
@@ -31,7 +31,7 @@ namespace EasyMemoryCache
                 {
                     cachedObject = objectSettingFunction();
                     var oType = cachedObject.GetType();
-                    if (oType.IsGenericType && (oType.GetGenericTypeDefinition() == typeof(List<>)))
+                    if (oType.IsGenericType && oType.GetGenericTypeDefinition() == typeof(List<>))
                     {
                         if (((ICollection)cachedObject).Count > 0 || cacheEmptyList)
                         {
@@ -68,7 +68,7 @@ namespace EasyMemoryCache
                     cachedObject = await objectSettingFunction().ConfigureAwait(false);
 
                     var oType = cachedObject.GetType();
-                    if (oType.IsGenericType && (oType.GetGenericTypeDefinition() == typeof(List<>)))
+                    if (oType.IsGenericType && oType.GetGenericTypeDefinition() == typeof(List<>))
                     {
                         if (((ICollection)cachedObject).Count > 0 || cacheEmptyList)
                         {
@@ -103,9 +103,19 @@ namespace EasyMemoryCache
             _server.FlushDatabase();
         }
 
+        public async Task InvalidateAllAsync()
+        {
+            await _server.FlushDatabaseAsync();
+        }
+
         public void SetValueToCache(string key, object value, int cacheTimeInMinutes = 120)
         {
             _cacheAccessor.Set(key, value, cacheTimeInMinutes);
+        }
+
+        public async Task SetValueToCacheAsync(string key, object value, int cacheTimeInMinutes = 120)
+        {
+            await _cacheAccessor.SetAsync(key, value, cacheTimeInMinutes);
         }
 
         public object GetValueFromCache(string key)

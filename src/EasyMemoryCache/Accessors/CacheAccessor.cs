@@ -1,7 +1,7 @@
-﻿using System;
-using System.Threading.Tasks;
-using Microsoft.Extensions.Caching.Distributed;
+﻿using Microsoft.Extensions.Caching.Distributed;
 using Microsoft.Extensions.Caching.StackExchangeRedis;
+using System;
+using System.Threading.Tasks;
 
 namespace EasyMemoryCache.Accessors
 {
@@ -16,9 +16,13 @@ namespace EasyMemoryCache.Accessors
         }
 
         public abstract object Get(string key);
+
         public abstract T Get<T>(string key);
+
         public abstract Task<T> GetAsync<T>(string key);
+
         protected abstract void SetInternal(string key, object value, DistributedCacheEntryOptions options);
+
         protected abstract Task SetInternalAsync(string key, object value, DistributedCacheEntryOptions options);
 
         public void Set(string key, object value, int cacheTimeInMinutes = 120)
