@@ -12,20 +12,20 @@ using Microsoft.Extensions.Options;
 
 namespace EasyMemoryCache.Memcached
 {
-    public static class EnyimMemcachedServiceCollectionExtensions
+    public static class MemcachedServiceCollectionExtensions
     {
         /// <summary>
         /// Add EnyimMemcached to the specified <see cref="IServiceCollection"/>.
-        /// Read configuration via IConfiguration.GetSection("enyimMemcached")
+        /// Read configuration via IConfiguration.GetSection("Memcached")
         /// </summary>
         /// <param name="services"></param>
         /// <returns></returns>
-        public static IServiceCollection AddEnyimMemcached(this IServiceCollection services)
+        public static IServiceCollection AddMemcached(this IServiceCollection services)
         {
-            return AddEnyimMemcachedInternal(services, null);
+            return AddMemcachedInternal(services, null);
         }
 
-        public static IServiceCollection AddEnyimMemcached(this IServiceCollection services, Action<MemcachedClientOptions> setupAction)
+        public static IServiceCollection AddMemcached(this IServiceCollection services, Action<MemcachedClientOptions> setupAction)
         {
             if (services == null)
             {
@@ -37,10 +37,10 @@ namespace EasyMemoryCache.Memcached
                 throw new ArgumentNullException(nameof(setupAction));
             }
 
-            return AddEnyimMemcachedInternal(services, s => s.Configure(setupAction));
+            return AddMemcachedInternal(services, s => s.Configure(setupAction));
         }
 
-        public static IServiceCollection AddEnyimMemcached(this IServiceCollection services, IConfigurationSection configurationSection)
+        public static IServiceCollection AddMemcached(this IServiceCollection services, IConfigurationSection configurationSection)
         {
             if (services == null)
             {
@@ -57,10 +57,10 @@ namespace EasyMemoryCache.Memcached
                 throw new ArgumentNullException($"{configurationSection.Key} in appsettings.json");
             }
 
-            return AddEnyimMemcachedInternal(services, s => s.Configure<MemcachedClientOptions>(configurationSection));
+            return AddMemcachedInternal(services, s => s.Configure<MemcachedClientOptions>(configurationSection));
         }
 
-        public static IServiceCollection AddEnyimMemcached(this IServiceCollection services, IConfiguration configuration, string sectionKey = "enyimMemcached")
+        public static IServiceCollection AddMemcached(this IServiceCollection services, IConfiguration configuration, string sectionKey = "CacheSettings")
         {
             if (services == null)
             {
@@ -78,10 +78,10 @@ namespace EasyMemoryCache.Memcached
                 throw new ArgumentNullException($"{sectionKey} in appsettings.json");
             }
 
-            return AddEnyimMemcachedInternal(services, s => s.Configure<MemcachedClientOptions>(section));
+            return AddMemcachedInternal(services, s => s.Configure<MemcachedClientOptions>(section));
         }
 
-        private static IServiceCollection AddEnyimMemcachedInternal(IServiceCollection services, Action<IServiceCollection> configure)
+        private static IServiceCollection AddMemcachedInternal(IServiceCollection services, Action<IServiceCollection> configure)
         {
             services.AddOptions();
             configure?.Invoke(services);
@@ -97,7 +97,7 @@ namespace EasyMemoryCache.Memcached
             return services;
         }
 
-        public static IServiceCollection AddEnyimMemcached<T>(
+        public static IServiceCollection AddMemcached<T>(
             this IServiceCollection services,
             IConfiguration configuration,
             string sectionKey)

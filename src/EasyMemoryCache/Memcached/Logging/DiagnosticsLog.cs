@@ -8,7 +8,7 @@ namespace EasyMemoryCache.Memcached.Logging
     {
         private TextWriter writer;
 
-        public DiagnosticsLogFactory() : this(@"C:\temp\EnyimMemcached.log")
+        public DiagnosticsLogFactory() : this(@"C:\temp\CacheSettings.log")
         {
         }
 

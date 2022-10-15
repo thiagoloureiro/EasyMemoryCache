@@ -30,7 +30,7 @@ namespace Microsoft.Extensions.DependencyInjection
 
         private static IServiceCollection AddEasyMemcachedCache(this IServiceCollection services, IConfigurationSection section)
         {
-            services.AddEnyimMemcached(section);
+            services.AddMemcached(section);
             services.AddSingleton<ICaching, MemcachedCaching>();
 
             return services;

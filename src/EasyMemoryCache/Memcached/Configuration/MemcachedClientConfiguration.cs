@@ -46,14 +46,14 @@ namespace EasyMemoryCache.Memcached.Configuration
             var options = optionsAccessor.Value;
             if ((options == null || options.Servers.Count == 0) && configuration != null)
             {
-                var section = configuration.GetSection("enyimMemcached");
+                var section = configuration.GetSection("CacheSettings");
                 if (section.Exists())
                 {
                     section.Bind(options);
                 }
                 else
                 {
-                    _logger.LogWarning($"No enyimMemcached setting in appsetting.json. Use default configuration");
+                    _logger.LogWarning($"No CacheSettings setting in appsetting.json. Use default configuration");
                     options.AddDefaultServer();
                 }
             }

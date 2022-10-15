@@ -5,19 +5,19 @@ using Microsoft.Extensions.Logging;
 
 namespace EasyMemoryCache.Memcached
 {
-    public static class EnyimMemcachedApplicationBuilderExtensions
+    public static class MemcachedApplicationBuilderExtensions
     {
-        public static IApplicationBuilder UseEnyimMemcached(this IApplicationBuilder app)
+        public static IApplicationBuilder UseMemcached(this IApplicationBuilder app)
         {
             var logger = app.ApplicationServices.GetService<ILogger<IMemcachedClient>>();
             try
             {
                 var client = app.ApplicationServices.GetRequiredService<IMemcachedClient>();
-                client.GetValueAsync<string>("EnyimMemcached").Wait();
+                client.GetValueAsync<string>("CacheSettings").Wait();
             }
             catch (Exception ex)
             {
-                logger.LogError(ex, "Failed to UseEnyimMemcached");
+                logger.LogError(ex, "Failed to UseMemcached");
             }
 
             return app;
