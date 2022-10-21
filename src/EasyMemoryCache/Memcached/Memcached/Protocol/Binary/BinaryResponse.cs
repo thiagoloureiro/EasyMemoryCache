@@ -1,0 +1,130 @@
+using System;
+using System.Text;
+using System.Threading.Tasks;
+using EasyMemoryCache.Memcached.Logging;
+
+namespace EasyMemoryCache.Memcached.Memcached.Protocol.Binary
+{
+    public class BinaryResponse
+    {
+        private static readonly ILog log = LogManager.GetLogger(typeof(BinaryResponse));
+
+        private const byte MAGIC_VALUE = 0x81;
+        private const int HeaderLength = 24;
+
+        private const int HEADER_OPCODE = 1;
+        private const int HEADER_KEY = 2; // 2-3
+        private const int HEADER_EXTRA = 4;
+        private const int HEADER_DATATYPE = 5;
+        private const int HEADER_STATUS = 6; // 6-7
+        private const int HEADER_BODY = 8; // 8-11
+        private const int HEADER_OPAQUE = 12; // 12-15
+        private const int HEADER_CAS = 16; // 16-23
+
+        public byte Opcode;
+        public int KeyLength;
+        public byte DataType;
+        public int StatusCode;
+
+        public int CorrelationId;
+        public ulong CAS;
+
+        public ArraySegment<byte> Extra;
+        public ArraySegment<byte> Data;
+
+        private string responseMessage;
+
+        public BinaryResponse()
+        {
+            this.StatusCode = -1;
+        }
+
+        public string GetStatusMessage()
+        {
+            return this.Data.Array == null
+                    ? null
+                    : (this.responseMessage
+                        ?? (this.responseMessage = Encoding.ASCII.GetString(this.Data.Array, this.Data.Offset, this.Data.Count)));
+        }
+
+        public unsafe bool Read(PooledSocket socket)
+        {
+            this.StatusCode = -1;
+
+            if (!socket.IsAlive)
+                return false;
+
+            var header = new byte[HeaderLength];
+            socket.Read(header, 0, header.Length);
+
+            int dataLength, extraLength;
+
+            DeserializeHeader(header, out dataLength, out extraLength);
+
+            if (dataLength > 0)
+            {
+                var data = new byte[dataLength];
+                socket.Read(data, 0, dataLength);
+
+                this.Extra = new ArraySegment<byte>(data, 0, extraLength);
+                this.Data = new ArraySegment<byte>(data, extraLength, data.Length - extraLength);
+            }
+
+            return this.StatusCode == 0;
+        }
+
+        public async Task<bool> ReadAsync(PooledSocket socket)
+        {
+            this.StatusCode = -1;
+
+            if (!socket.IsAlive) return false;
+
+            var header = new byte[HeaderLength];
+            await socket.ReadAsync(header, 0, header.Length);
+
+            int dataLength, extraLength;
+
+            DeserializeHeader(header, out dataLength, out extraLength);
+
+            if (dataLength > 0)
+            {
+                var data = new byte[dataLength];
+                await socket.ReadAsync(data, 0, dataLength);
+
+                this.Extra = new ArraySegment<byte>(data, 0, extraLength);
+                this.Data = new ArraySegment<byte>(data, extraLength, data.Length - extraLength);
+            }
+
+            return this.StatusCode == 0;
+        }
+
+        private unsafe void DeserializeHeader(byte[] header, out int dataLength, out int extraLength)
+        {
+            fixed (byte* buffer = header)
+            {
+                if (buffer[0] != MAGIC_VALUE)
+                    throw new InvalidOperationException("Expected magic value " + MAGIC_VALUE + ", received: " + buffer[0]);
+
+                this.DataType = buffer[HEADER_DATATYPE];
+                this.Opcode = buffer[HEADER_OPCODE];
+                this.StatusCode = BinaryConverter.DecodeUInt16(buffer, HEADER_STATUS);
+
+                this.KeyLength = BinaryConverter.DecodeUInt16(buffer, HEADER_KEY);
+                this.CorrelationId = BinaryConverter.DecodeInt32(buffer, HEADER_OPAQUE);
+                this.CAS = BinaryConverter.DecodeUInt64(buffer, HEADER_CAS);
+
+                dataLength = BinaryConverter.DecodeInt32(buffer, HEADER_BODY);
+                extraLength = buffer[HEADER_EXTRA];
+            }
+        }
+
+        private void LogExecutionTime(string title, DateTime startTime, int thresholdMs)
+        {
+            var duration = (DateTime.Now - startTime).TotalMilliseconds;
+            if (duration > thresholdMs)
+            {
+                log.WarnFormat("MemcachedBinaryResponse-{0}: {1}ms", title, duration);
+            }
+        }
+    }
+}

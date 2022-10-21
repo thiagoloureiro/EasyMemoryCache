@@ -1,13 +1,15 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio Version 16
-VisualStudioVersion = 16.0.29020.237
+# Visual Studio Version 17
+VisualStudioVersion = 17.3.32929.385
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "EasyMemoryCache", "src\EasyMemoryCache\EasyMemoryCache.csproj", "{A470B998-506C-49FB-8C80-27E0FF1DAA3E}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "EasyMemoryCache.Tests", "src\EasyMemoryCache.Tests\EasyMemoryCache.Tests.csproj", "{10973543-3D4F-43E4-BEBE-40851B0B2703}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "EasyMemoryCache.Tests", "src\EasyMemoryCache.Tests\EasyMemoryCache.Tests.csproj", "{10973543-3D4F-43E4-BEBE-40851B0B2703}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "EasyMemoryCache.Sample", "src\EasyMemoryCache.Sample\EasyMemoryCache.Sample.csproj", "{BB5BE72E-B594-4DCA-83CA-974C3E193938}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "EasyMemoryCache.SampleConsole", "src\EasyMemoryCache.Sample\EasyMemoryCache.SampleConsole.csproj", "{BB5BE72E-B594-4DCA-83CA-974C3E193938}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "EasyMemoryCache.SampleApi", "EasyMemoryCache.SampleApi\EasyMemoryCache.SampleApi.csproj", "{7ABD8004-1EA9-4B42-8AEC-273404F965F4}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -27,6 +29,10 @@ Global
 		{BB5BE72E-B594-4DCA-83CA-974C3E193938}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{BB5BE72E-B594-4DCA-83CA-974C3E193938}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{BB5BE72E-B594-4DCA-83CA-974C3E193938}.Release|Any CPU.Build.0 = Release|Any CPU
+		{7ABD8004-1EA9-4B42-8AEC-273404F965F4}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{7ABD8004-1EA9-4B42-8AEC-273404F965F4}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{7ABD8004-1EA9-4B42-8AEC-273404F965F4}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{7ABD8004-1EA9-4B42-8AEC-273404F965F4}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

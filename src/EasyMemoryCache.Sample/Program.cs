@@ -1,10 +1,10 @@
-﻿using Microsoft.Extensions.DependencyInjection;
+﻿using EasyMemoryCache.Configuration;
+using Microsoft.Extensions.DependencyInjection;
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
-using EasyMemoryCache.Configuration;
 
-namespace EasyMemoryCache.Sample
+namespace EasyMemoryCache.SampleConsole
 {
     internal class Program
     {
@@ -46,6 +46,14 @@ namespace EasyMemoryCache.Sample
             Console.WriteLine(string.Join(",", lstStringCachedFromAsync));
             Console.WriteLine(string.Join(",", lstStringCached));
             Console.WriteLine(string.Join(",", lstStringCachedWithParamFromAsync));
+
+            // Returning All Keys
+            Console.WriteLine("Keys in cache:");
+            var keys = caching.GetKeys();
+            foreach (var key in keys)
+            {
+                Console.WriteLine(key);
+            }
         }
 
         private static ICaching SetupDI
@@ -56,7 +64,7 @@ namespace EasyMemoryCache.Sample
                 var serviceProvider = new ServiceCollection()
                     .AddEasyCache(new CacheSettings()
                     {
-                        IsDistributed = false
+                        CacheProvider = CacheProvider.MemoryCache
                     })
                     .BuildServiceProvider();
 

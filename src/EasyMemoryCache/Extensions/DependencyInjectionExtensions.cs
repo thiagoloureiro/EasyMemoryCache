@@ -1,18 +1,39 @@
-﻿using System;
-using EasyMemoryCache;
+﻿using EasyMemoryCache;
 using EasyMemoryCache.Accessors;
 using EasyMemoryCache.Configuration;
+using EasyMemoryCache.Memcached;
+using EasyMemoryCache.Redis;
+using Microsoft.Extensions.Configuration;
 using StackExchange.Redis;
 
 namespace Microsoft.Extensions.DependencyInjection
 {
     public static class DependencyInjectionExtensions
     {
-        public static IServiceCollection AddEasyCache(this IServiceCollection services, CacheSettings settings)
+        public static IServiceCollection AddEasyCache(this IServiceCollection services, CacheSettings settings, IConfigurationSection section = null)
         {
-            return settings.IsDistributed
-                ? services.AddEasyRedisCache(settings)
-                : services.AddEasyMemoryCache();
+            switch (settings.CacheProvider)
+            {
+                case CacheProvider.MemoryCache:
+                    return services.AddEasyMemoryCache();
+
+                case CacheProvider.Redis:
+                    return services.AddEasyRedisCache(settings);
+
+                case CacheProvider.Memcached:
+                    return services.AddEasyMemcachedCache(section);
+
+                default:
+                    return services.AddEasyMemoryCache();
+            }
+        }
+
+        private static IServiceCollection AddEasyMemcachedCache(this IServiceCollection services, IConfigurationSection section)
+        {
+            services.AddMemcached(section);
+            services.AddSingleton<ICaching, MemcachedCaching>();
+
+            return services;
         }
 
         private static IServiceCollection AddEasyRedisCache(this IServiceCollection services, CacheSettings settings)
@@ -35,6 +56,7 @@ namespace Microsoft.Extensions.DependencyInjection
                 case SerializationType.Protobuf:
                     services.AddSingleton<CacheAccessor, ProtobufCacheAccessor>();
                     break;
+
                 default:
                     services.AddSingleton<CacheAccessor, NewtonsoftCacheAccessor>();
                     break;
@@ -53,7 +75,7 @@ namespace Microsoft.Extensions.DependencyInjection
         private static IServiceCollection AddEasyMemoryCache(this IServiceCollection services)
         {
             services.AddMemoryCache();
-            services.AddSingleton<ICaching, EasyMemoryCache.Caching>();
+            services.AddSingleton<ICaching, EasyMemoryCache.Memorycache.Caching>();
 
             return services;
         }

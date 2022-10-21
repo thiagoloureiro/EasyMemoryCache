@@ -14,9 +14,14 @@ namespace EasyMemoryCache
 
         void InvalidateAll();
 
+        Task InvalidateAllAsync();
+
         void SetValueToCache(string key, object value, int cacheTimeInMinutes = 120);
 
+        Task SetValueToCacheAsync(string key, object value, int cacheTimeInMinutes = 120);
+
         object GetValueFromCache(string key);
+
         T GetValueFromCache<T>(string key);
 
         IEnumerable<string> GetKeys();
