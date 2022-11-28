@@ -38,17 +38,10 @@ namespace Microsoft.Extensions.DependencyInjection
 
         private static IServiceCollection AddEasyRedisCache(this IServiceCollection services, CacheSettings settings)
         {
-            var configurationOptions = new ConfigurationOptions()
-            {
-                AllowAdmin = true,
-                Ssl = false,
-                Password = settings.RedisPassword
-            };
-            configurationOptions.EndPoints.Add(settings.RedisConnectionString);
-
             services.AddStackExchangeRedisCache(options =>
             {
-                options.ConfigurationOptions = configurationOptions;
+                options.Configuration =
+                    settings.RedisConnectionString;
             });
 
             switch (settings.RedisSerialization)
@@ -65,8 +58,9 @@ namespace Microsoft.Extensions.DependencyInjection
             services.AddSingleton<ICaching, RedisCaching>();
             services.AddSingleton(sp =>
             {
-                var connection = ConnectionMultiplexer.Connect(configurationOptions);
-                return connection.GetServer(settings.RedisConnectionString);
+                var host = settings.RedisConnectionString.Split(',')[0];
+                var connection = ConnectionMultiplexer.Connect(settings.RedisConnectionString);
+                return connection.GetServer(host);
             });
 
             return services;

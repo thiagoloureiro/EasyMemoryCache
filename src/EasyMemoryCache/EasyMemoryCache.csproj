@@ -15,9 +15,9 @@
 		<PackageLicenseFile>LICENSE</PackageLicenseFile>
 		<PackageReleaseNotes>Included method to return list of keys (improved)</PackageReleaseNotes>
 		<PackageIconUrl>https://raw.githubusercontent.com/thiagoloureiro/EasyMemoryCache/master/cacheicon.png</PackageIconUrl>
-		<Version>1.0.25</Version>
-		<AssemblyVersion>1.0.25.0</AssemblyVersion>
-		<FileVersion>1.0.25.0</FileVersion>
+		<Version>1.0.26</Version>
+		<AssemblyVersion>1.0.26.0</AssemblyVersion>
+		<FileVersion>1.0.26.0</FileVersion>
 		<PackageIconUrl>https://raw.githubusercontent.com/thiagoloureiro/EasyMemoryCache/master/cacheicon.png</PackageIconUrl>
 		<Icon>https://raw.githubusercontent.com/thiagoloureiro/EasyMemoryCache/master/cacheicon.png</Icon>
 	</PropertyGroup>
