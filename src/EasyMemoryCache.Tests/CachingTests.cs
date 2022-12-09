@@ -191,22 +191,6 @@ namespace EasyMemoryCache.Tests
             Assert.True(keys.Count > 0);
         }
 
-        [Fact]
-        public async Task should_return_list_of_keys_complete()
-        {
-            // Arrange
-            var caching = new Caching();
-            var ret = await caching.GetOrSetObjectFromCacheAsync(CacheKeyName, 20, ReturnListOfStringAsync);
-            var objectTask = caching.GetValueFromCache(CacheKeyName);
-            var lst = (List<string>)objectTask;
-
-            // Act
-            var keys = caching.GetData().ToList();
-
-            // Assert
-            Assert.True(keys.Count > 0);
-        }
-
         private Task<List<string>> ReturnEmptyListAsync()
         {
             return Task.Run(GenerateEmptyList);

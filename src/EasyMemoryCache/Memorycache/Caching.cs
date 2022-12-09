@@ -1,11 +1,10 @@
-﻿using Microsoft.Extensions.Caching.Memory;
+﻿using EasyMemoryCache.Extensions;
+using Microsoft.Extensions.Caching.Memory;
+using Microsoft.Extensions.DependencyInjection;
 using System;
 using System.Collections;
 using System.Collections.Generic;
-using System.Reflection;
 using System.Threading.Tasks;
-using EasyMemoryCache.Extensions;
-using Microsoft.Extensions.DependencyInjection;
 
 namespace EasyMemoryCache.Memorycache
 {
@@ -128,55 +127,14 @@ namespace EasyMemoryCache.Memorycache
 
         public void InvalidateAll()
         {
-            var field = typeof(MemoryCache).GetProperty("EntriesCollection", BindingFlags.NonPublic | BindingFlags.Instance);
-            if (field != null)
-            {
-                var collection = field.GetValue(_myCache) as ICollection;
-                var items = new List<string>();
-                if (collection != null)
-                    foreach (var item in collection)
-                    {
-                        var methodInfo = item.GetType().GetProperty("Key");
-                        if (methodInfo != null)
-                        {
-                            var val = methodInfo.GetValue(item);
-                            items.Add(val.ToString());
-                        }
-                    }
-
-                foreach (var item in items)
-                {
-                    _myCache.Remove(item);
-                }
-            }
+            _myCache.Clear();
         }
 
         public async Task InvalidateAllAsync()
         {
             await Task.Run(() =>
             {
-                var field = typeof(MemoryCache).GetProperty("EntriesCollection",
-                    BindingFlags.NonPublic | BindingFlags.Instance);
-                if (field != null)
-                {
-                    var collection = field.GetValue(_myCache) as ICollection;
-                    var items = new List<string>();
-                    if (collection != null)
-                        foreach (var item in collection)
-                        {
-                            var methodInfo = item.GetType().GetProperty("Key");
-                            if (methodInfo != null)
-                            {
-                                var val = methodInfo.GetValue(item);
-                                items.Add(val.ToString());
-                            }
-                        }
-
-                    foreach (var item in items)
-                    {
-                        _myCache.Remove(item);
-                    }
-                }
+                _myCache.Clear();
             });
         }
 
@@ -208,32 +166,13 @@ namespace EasyMemoryCache.Memorycache
 
         public IEnumerable<string> GetKeys()
         {
-            return _myCache.GetKeys<string>();
-        }
-
-        public IEnumerable<DataContainer> GetData()
-        {
-            var items = new List<DataContainer>();
-            var field = typeof(MemoryCache).GetProperty("EntriesCollection", BindingFlags.NonPublic | BindingFlags.Instance);
-            if (field != null)
+            var keys = _myCache.GetKeys();
+            var lst = new List<string>();
+            foreach (var key in keys)
             {
-                var collection = field.GetValue(_myCache) as ICollection;
-                if (collection != null)
-                {
-                    foreach (var item in collection)
-                    {
-                        var values = item.GetType().GetProperty("Value");
-                        if (values != null)
-                        {
-                            var entry = (ICacheEntry)values.GetValue(item);
-                            items.Add(new DataContainer(entry.Key.ToString(), entry.Size, entry.AbsoluteExpiration,
-                                entry.Priority));
-                        }
-                    }
-                }
+                lst.Add(key.ToString());
             }
-
-            return items;
+            return lst;
         }
     }
 }

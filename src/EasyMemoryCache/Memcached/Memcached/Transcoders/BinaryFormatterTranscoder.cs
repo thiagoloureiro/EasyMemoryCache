@@ -10,8 +10,10 @@ namespace EasyMemoryCache.Memcached.Memcached.Transcoders
         {
             using (var ms = new MemoryStream())
             {
+#pragma warning disable SYSLIB0011
                 new BinaryFormatter().Serialize(ms, value);
                 return new ArraySegment<byte>(ms.GetBuffer(), 0, (int)ms.Length);
+#pragma warning restore SYSLIB0011
             }
         }
 
@@ -24,7 +26,9 @@ namespace EasyMemoryCache.Memcached.Memcached.Transcoders
         {
             using (var ms = new MemoryStream(value.Array, value.Offset, value.Count))
             {
+#pragma warning disable SYSLIB0011
                 return new BinaryFormatter().Deserialize(ms);
+#pragma warning restore SYSLIB0011
             }
         }
     }

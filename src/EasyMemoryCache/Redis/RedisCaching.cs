@@ -138,10 +138,5 @@ namespace EasyMemoryCache.Redis
         {
             return _server.Keys().Select(x => x.ToString());
         }
-
-        public IEnumerable<DataContainer> GetData()
-        {
-            throw new NotImplementedException();
-        }
     }
 }

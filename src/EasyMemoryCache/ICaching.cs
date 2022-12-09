@@ -25,7 +25,5 @@ namespace EasyMemoryCache
         T GetValueFromCache<T>(string key);
 
         IEnumerable<string> GetKeys();
-
-        IEnumerable<DataContainer> GetData();
     }
 }

@@ -77,10 +77,5 @@ namespace EasyMemoryCache.Memcached
         {
             throw new NotImplementedException();
         }
-
-        public IEnumerable<DataContainer> GetData()
-        {
-            throw new NotImplementedException();
-        }
     }
 }
