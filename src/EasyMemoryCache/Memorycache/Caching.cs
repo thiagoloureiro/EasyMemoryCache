@@ -1,4 +1,5 @@
-﻿using EasyMemoryCache.Extensions;
+﻿using AsyncKeyedLock;
+using EasyMemoryCache.Extensions;
 using Microsoft.Extensions.Caching.Memory;
 using Microsoft.Extensions.DependencyInjection;
 using System;
@@ -11,7 +12,11 @@ namespace EasyMemoryCache.Memorycache
     public class Caching : ICaching, IDisposable
     {
         private readonly MemoryCache _myCache;
-        private readonly NamedSemaphoreSlim _cacheLock = new NamedSemaphoreSlim(1);
+        private readonly AsyncKeyedLocker<string> _cacheLock = new AsyncKeyedLocker<string>(o =>
+        {
+            o.PoolSize = 20;
+            o.PoolInitialFill = 1;
+        });
 
         public Caching() : this(new MemoryCache(new MemoryCacheOptions()))
         {
@@ -34,39 +39,36 @@ namespace EasyMemoryCache.Memorycache
 
             if (data == null)
             {
-                _cacheLock[cacheItemName].Wait();
-
-                try
+                using (_cacheLock.Lock(cacheItemName))
                 {
-                    cachedObject = objectSettingFunction();
-
-                    var oType = cachedObject.GetType();
-                    if (oType.IsGenericType && oType.GetGenericTypeDefinition() == typeof(List<>))
+                    try
                     {
-                        if (((ICollection)cachedObject).Count > 0)
+                        cachedObject = objectSettingFunction();
+
+                        var oType = cachedObject.GetType();
+                        if (oType.IsGenericType && oType.GetGenericTypeDefinition() == typeof(List<>))
                         {
-                            _myCache.Set(cacheItemName, cachedObject,
-                                DateTimeOffset.Now.AddMinutes(cacheTimeInMinutes));
+                            if (((ICollection)cachedObject).Count > 0)
+                            {
+                                _myCache.Set(cacheItemName, cachedObject,
+                                    DateTimeOffset.Now.AddMinutes(cacheTimeInMinutes));
+                            }
+                            else if (cacheEmptyList)
+                            {
+                                _myCache.Set(cacheItemName, cachedObject,
+                                    DateTimeOffset.Now.AddMinutes(cacheTimeInMinutes));
+                            }
                         }
-                        else if (cacheEmptyList)
+                        else
                         {
-                            _myCache.Set(cacheItemName, cachedObject,
-                                DateTimeOffset.Now.AddMinutes(cacheTimeInMinutes));
+                            _myCache.Set(cacheItemName, cachedObject, DateTimeOffset.Now.AddMinutes(cacheTimeInMinutes));
                         }
                     }
-                    else
+                    catch (Exception err)
                     {
-                        _myCache.Set(cacheItemName, cachedObject, DateTimeOffset.Now.AddMinutes(cacheTimeInMinutes));
+                        Console.WriteLine(err.Message);
+                        return cachedObject;
                     }
-                }
-                catch (Exception err)
-                {
-                    Console.WriteLine(err.Message);
-                    return cachedObject;
-                }
-                finally
-                {
-                    _cacheLock[cacheItemName].Release();
                 }
             }
             return cachedObject;
@@ -82,39 +84,37 @@ namespace EasyMemoryCache.Memorycache
 
             if (cacheObj == null || EqualityComparer<T>.Default.Equals(cachedObject, default))
             {
-                await _cacheLock[cacheItemName].WaitAsync().ConfigureAwait(false);
-                try
+                using (await _cacheLock.LockAsync(cacheItemName).ConfigureAwait(false))
                 {
-                    cachedObject = await objectSettingFunction().ConfigureAwait(false);
-
-                    var oType = cachedObject.GetType();
-
-                    if (oType.IsGenericType && oType.GetGenericTypeDefinition() == typeof(List<>))
+                    try
                     {
-                        if (((ICollection)cachedObject).Count > 0)
+                        cachedObject = await objectSettingFunction().ConfigureAwait(false);
+
+                        var oType = cachedObject.GetType();
+
+                        if (oType.IsGenericType && oType.GetGenericTypeDefinition() == typeof(List<>))
                         {
-                            _myCache.Set(cacheItemName, cachedObject,
-                                DateTimeOffset.Now.AddMinutes(cacheTimeInMinutes));
+                            if (((ICollection)cachedObject).Count > 0)
+                            {
+                                _myCache.Set(cacheItemName, cachedObject,
+                                    DateTimeOffset.Now.AddMinutes(cacheTimeInMinutes));
+                            }
+                            else if (cacheEmptyList)
+                            {
+                                _myCache.Set(cacheItemName, cachedObject,
+                                    DateTimeOffset.Now.AddMinutes(cacheTimeInMinutes));
+                            }
                         }
-                        else if (cacheEmptyList)
+                        else
                         {
-                            _myCache.Set(cacheItemName, cachedObject,
-                                DateTimeOffset.Now.AddMinutes(cacheTimeInMinutes));
+                            _myCache.Set(cacheItemName, cachedObject, DateTimeOffset.Now.AddMinutes(cacheTimeInMinutes));
                         }
                     }
-                    else
+                    catch (Exception err)
                     {
-                        _myCache.Set(cacheItemName, cachedObject, DateTimeOffset.Now.AddMinutes(cacheTimeInMinutes));
+                        Console.WriteLine(err.Message);
+                        return cachedObject;
                     }
-                }
-                catch (Exception err)
-                {
-                    Console.WriteLine(err.Message);
-                    return cachedObject;
-                }
-                finally
-                {
-                    _cacheLock[cacheItemName].Release();
                 }
             }
             return cachedObject;
@@ -161,7 +161,6 @@ namespace EasyMemoryCache.Memorycache
         public void Dispose()
         {
             _myCache?.Dispose();
-            _cacheLock?.Dispose();
         }
 
         public IEnumerable<string> GetKeys()

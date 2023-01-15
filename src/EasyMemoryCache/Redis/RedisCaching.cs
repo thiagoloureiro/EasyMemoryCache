@@ -1,4 +1,5 @@
-﻿using EasyMemoryCache.Accessors;
+﻿using AsyncKeyedLock;
+using EasyMemoryCache.Accessors;
 using StackExchange.Redis;
 using System;
 using System.Collections;
@@ -12,7 +13,11 @@ namespace EasyMemoryCache.Redis
     {
         private readonly CacheAccessor _cacheAccessor;
         private readonly IServer _server;
-        private readonly NamedSemaphoreSlim _cacheLock = new NamedSemaphoreSlim(1);
+        private readonly AsyncKeyedLocker<string> _cacheLock = new AsyncKeyedLocker<string>(o =>
+        {
+            o.PoolSize = 20;
+            o.PoolInitialFill = 1;
+        });
 
         public RedisCaching(CacheAccessor cacheAccessor, IServer server)
         {
@@ -26,31 +31,29 @@ namespace EasyMemoryCache.Redis
 
             if (cachedObject == null || EqualityComparer<T>.Default.Equals(cachedObject, default))
             {
-                _cacheLock[cacheItemName].Wait();
-                try
+                using (_cacheLock.Lock(cacheItemName))
                 {
-                    cachedObject = objectSettingFunction();
-                    var oType = cachedObject.GetType();
-                    if (oType.IsGenericType && oType.GetGenericTypeDefinition() == typeof(List<>))
+                    try
                     {
-                        if (((ICollection)cachedObject).Count > 0 || cacheEmptyList)
+                        cachedObject = objectSettingFunction();
+                        var oType = cachedObject.GetType();
+                        if (oType.IsGenericType && oType.GetGenericTypeDefinition() == typeof(List<>))
+                        {
+                            if (((ICollection)cachedObject).Count > 0 || cacheEmptyList)
+                            {
+                                _cacheAccessor.Set(cacheItemName, cachedObject, cacheTimeInMinutes);
+                            }
+                        }
+                        else
                         {
                             _cacheAccessor.Set(cacheItemName, cachedObject, cacheTimeInMinutes);
                         }
                     }
-                    else
+                    catch (Exception err)
                     {
-                        _cacheAccessor.Set(cacheItemName, cachedObject, cacheTimeInMinutes);
+                        Console.WriteLine(err.Message);
+                        return cachedObject;
                     }
-                }
-                catch (Exception err)
-                {
-                    Console.WriteLine(err.Message);
-                    return cachedObject;
-                }
-                finally
-                {
-                    _cacheLock[cacheItemName].Release();
                 }
             }
             return cachedObject;
@@ -62,32 +65,30 @@ namespace EasyMemoryCache.Redis
 
             if (cachedObject == null || EqualityComparer<T>.Default.Equals(cachedObject, default))
             {
-                await _cacheLock[cacheItemName].WaitAsync().ConfigureAwait(false);
-                try
+                using (await _cacheLock.LockAsync(cacheItemName).ConfigureAwait(false))
                 {
-                    cachedObject = await objectSettingFunction().ConfigureAwait(false);
-
-                    var oType = cachedObject.GetType();
-                    if (oType.IsGenericType && oType.GetGenericTypeDefinition() == typeof(List<>))
+                    try
                     {
-                        if (((ICollection)cachedObject).Count > 0 || cacheEmptyList)
+                        cachedObject = await objectSettingFunction().ConfigureAwait(false);
+
+                        var oType = cachedObject.GetType();
+                        if (oType.IsGenericType && oType.GetGenericTypeDefinition() == typeof(List<>))
+                        {
+                            if (((ICollection)cachedObject).Count > 0 || cacheEmptyList)
+                            {
+                                await _cacheAccessor.SetAsync(cacheItemName, cachedObject, cacheTimeInMinutes).ConfigureAwait(false);
+                            }
+                        }
+                        else
                         {
                             await _cacheAccessor.SetAsync(cacheItemName, cachedObject, cacheTimeInMinutes).ConfigureAwait(false);
                         }
                     }
-                    else
+                    catch (Exception err)
                     {
-                        await _cacheAccessor.SetAsync(cacheItemName, cachedObject, cacheTimeInMinutes).ConfigureAwait(false);
+                        Console.WriteLine(err.Message);
+                        return cachedObject;
                     }
-                }
-                catch (Exception err)
-                {
-                    Console.WriteLine(err.Message);
-                    return cachedObject;
-                }
-                finally
-                {
-                    _cacheLock[cacheItemName].Release();
                 }
             }
             return cachedObject;
@@ -131,7 +132,6 @@ namespace EasyMemoryCache.Redis
         public void Dispose()
         {
             _cacheAccessor.Dispose();
-            _cacheLock.Dispose();
         }
 
         public IEnumerable<string> GetKeys()
