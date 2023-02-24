@@ -14,27 +14,25 @@
 		<Copyright>2022© Thiago Loureiro</Copyright>
 		<PackageLicenseFile>LICENSE</PackageLicenseFile>
 		<PackageReleaseNotes>Included method to return list of keys (improved)</PackageReleaseNotes>
-		<PackageIconUrl>https://raw.githubusercontent.com/thiagoloureiro/EasyMemoryCache/master/cacheicon.png</PackageIconUrl>
-		<Version>1.0.27</Version>
+		<Version>1.0.28</Version>
 		<AssemblyVersion>1.0.27.0</AssemblyVersion>
 		<FileVersion>1.0.27.0</FileVersion>
-		<PackageIconUrl>https://raw.githubusercontent.com/thiagoloureiro/EasyMemoryCache/master/cacheicon.png</PackageIconUrl>
 		<Icon>https://raw.githubusercontent.com/thiagoloureiro/EasyMemoryCache/master/cacheicon.png</Icon>
 	</PropertyGroup>
 
 	<ItemGroup>
 		<PackageReference Include="AsyncKeyedLock" Version="6.1.1" />
 		<PackageReference Include="Microsoft.Extensions.Caching.Memory" Version="7.0.0" />
-		<PackageReference Include="Microsoft.Extensions.Caching.StackExchangeRedis" Version="7.0.0" />
+		<PackageReference Include="Microsoft.Extensions.Caching.StackExchangeRedis" Version="7.0.3" />
 		<PackageReference Include="Newtonsoft.Json" Version="13.0.2" />
-		<PackageReference Include="protobuf-net" Version="3.1.25" />
+		<PackageReference Include="protobuf-net" Version="3.2.0" />
 		<PackageReference Include="Microsoft.AspNetCore.Http.Abstractions" Version="2.2.0" />
 		<PackageReference Include="Newtonsoft.Json.Bson" Version="1.0.2" />
 		<PackageReference Include="System.Threading.Tasks.Extensions" Version="4.5.4" />
 		<PackageReference Include="Microsoft.Extensions.Configuration.Abstractions" Version="7.0.0" />
 		<PackageReference Include="Microsoft.Extensions.Options.ConfigurationExtensions" Version="7.0.0" />
 		<PackageReference Include="Microsoft.Extensions.Logging.Abstractions" Version="7.0.0" />
-		<PackageReference Include="Microsoft.Extensions.Options" Version="7.0.0" />
+		<PackageReference Include="Microsoft.Extensions.Options" Version="7.0.1" />
 		<PackageReference Include="Microsoft.Extensions.Caching.Abstractions" Version="7.0.0" />
 	</ItemGroup>
 
