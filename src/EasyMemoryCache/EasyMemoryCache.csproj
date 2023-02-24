@@ -11,13 +11,14 @@
 		<RepositoryType>GitHub</RepositoryType>
 		<PackageTags>memorycache, caching, nuget, cache</PackageTags>
 		<PackageProjectUrl>https://github.com/thiagoloureiro/EasyMemoryCache</PackageProjectUrl>
-		<Copyright>2022© Thiago Loureiro</Copyright>
+		<Copyright>2023© Thiago Loureiro</Copyright>
 		<PackageLicenseFile>LICENSE</PackageLicenseFile>
 		<PackageReleaseNotes>Included method to return list of keys (improved)</PackageReleaseNotes>
-		<Version>1.0.28</Version>
-		<AssemblyVersion>1.0.27.0</AssemblyVersion>
-		<FileVersion>1.0.27.0</FileVersion>
+		<Version>1.0.30</Version>
+		<AssemblyVersion>1.0.30.0</AssemblyVersion>
+		<FileVersion>1.0.30.0</FileVersion>
 		<Icon>https://raw.githubusercontent.com/thiagoloureiro/EasyMemoryCache/master/cacheicon.png</Icon>
+		<PackageIcon>cacheicon.png</PackageIcon>
 	</PropertyGroup>
 
 	<ItemGroup>
@@ -41,5 +42,7 @@
 			<Pack>True</Pack>
 			<PackagePath></PackagePath>
 		</None>
+		 <None Include="cacheicon.png" Pack="true" PackagePath=""/>
+	
 	</ItemGroup>
 </Project>
