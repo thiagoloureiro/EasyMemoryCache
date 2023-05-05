@@ -1,7 +1,7 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
 	<PropertyGroup>
-		<TargetFrameworks>netstandard2.0;netstandard2.1;net6.0;net7.0</TargetFrameworks>
+		<TargetFrameworks>net7.0</TargetFrameworks>
 		<AllowUnsafeBlocks>true</AllowUnsafeBlocks>
 		<GeneratePackageOnBuild>true</GeneratePackageOnBuild>
 		<Authors>Thiago Loureiro</Authors>
@@ -14,20 +14,19 @@
 		<Copyright>2023© Thiago Loureiro</Copyright>
 		<PackageLicenseFile>LICENSE</PackageLicenseFile>
 		<PackageReleaseNotes>Included method to return list of keys (improved)</PackageReleaseNotes>
-		<Version>1.0.30</Version>
-		<AssemblyVersion>1.0.30.0</AssemblyVersion>
-		<FileVersion>1.0.30.0</FileVersion>
+		<Version>1.0.32</Version>
+		<AssemblyVersion>1.0.32.0</AssemblyVersion>
+		<FileVersion>1.0.32.0</FileVersion>
 		<Icon>https://raw.githubusercontent.com/thiagoloureiro/EasyMemoryCache/master/cacheicon.png</Icon>
 		<PackageIcon>cacheicon.png</PackageIcon>
 	</PropertyGroup>
 
 	<ItemGroup>
-		<PackageReference Include="AsyncKeyedLock" Version="6.1.1" />
+		<PackageReference Include="AsyncKeyedLock" Version="6.2.1" />
 		<PackageReference Include="Microsoft.Extensions.Caching.Memory" Version="7.0.0" />
-		<PackageReference Include="Microsoft.Extensions.Caching.StackExchangeRedis" Version="7.0.3" />
-		<PackageReference Include="Newtonsoft.Json" Version="13.0.2" />
-		<PackageReference Include="protobuf-net" Version="3.2.0" />
-		<PackageReference Include="Microsoft.AspNetCore.Http.Abstractions" Version="2.2.0" />
+		<PackageReference Include="Microsoft.Extensions.Caching.StackExchangeRedis" Version="7.0.5" />
+		<PackageReference Include="Newtonsoft.Json" Version="13.0.3" />
+		<PackageReference Include="protobuf-net" Version="3.2.16" />
 		<PackageReference Include="Newtonsoft.Json.Bson" Version="1.0.2" />
 		<PackageReference Include="System.Threading.Tasks.Extensions" Version="4.5.4" />
 		<PackageReference Include="Microsoft.Extensions.Configuration.Abstractions" Version="7.0.0" />
@@ -42,7 +41,7 @@
 			<Pack>True</Pack>
 			<PackagePath></PackagePath>
 		</None>
-		 <None Include="cacheicon.png" Pack="true" PackagePath=""/>
+		 <None Include="cacheicon.png" Pack="true" PackagePath="" />
 	
 	</ItemGroup>
 </Project>
