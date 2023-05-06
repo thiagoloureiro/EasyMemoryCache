@@ -25,6 +25,7 @@
 		<PackageReference Include="AsyncKeyedLock" Version="6.2.1" />
 		<PackageReference Include="Microsoft.Extensions.Caching.Memory" Version="7.0.0" />
 		<PackageReference Include="Microsoft.Extensions.Caching.StackExchangeRedis" Version="7.0.5" />
+		<PackageReference Include="Microsoft.NETCore.Platforms" Version="7.0.2" />
 		<PackageReference Include="Newtonsoft.Json" Version="13.0.3" />
 		<PackageReference Include="protobuf-net" Version="3.2.16" />
 		<PackageReference Include="Newtonsoft.Json.Bson" Version="1.0.2" />
