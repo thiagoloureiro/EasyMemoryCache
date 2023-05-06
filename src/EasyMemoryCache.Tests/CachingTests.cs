@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using EasyMemoryCache.Configuration;
 using EasyMemoryCache.Memorycache;
 using Xunit;
 
@@ -22,7 +23,41 @@ namespace EasyMemoryCache.Tests
             var caching = new Caching();
 
             // Act
-            var ret = await caching.GetOrSetObjectFromCacheAsync(CacheKeyTestDateTimeKey, 20, GetDateTime);
+            var ret = await caching.GetOrSetObjectFromCacheAsync(CacheKeyTestDateTimeKey, 20, GetDateTime, interval: CacheTimeInterval.Seconds);
+
+            // Assert
+            // Only for asserting purposes, no need to use GetValueFromCache, just use the GetOrSetObjectFromCacheAsync
+            var objectTask = caching.GetValueFromCache(CacheKeyTestDateTimeKey);
+            var value = (DateTime)objectTask;
+            Assert.Equal(value, GetDateTime().Result);
+            Assert.Equal(ret, GetDateTime().Result);
+        }
+
+        [Fact]
+        public async Task should_return_datetime_without_parameters_minutes_async()
+        {
+            // Arrange
+            var caching = new Caching();
+
+            // Act
+            var ret = await caching.GetOrSetObjectFromCacheAsync(CacheKeyTestDateTimeKey, 20, GetDateTime, interval: CacheTimeInterval.Minutes);
+
+            // Assert
+            // Only for asserting purposes, no need to use GetValueFromCache, just use the GetOrSetObjectFromCacheAsync
+            var objectTask = caching.GetValueFromCache(CacheKeyTestDateTimeKey);
+            var value = (DateTime)objectTask;
+            Assert.Equal(value, GetDateTime().Result);
+            Assert.Equal(ret, GetDateTime().Result);
+        }
+
+        [Fact]
+        public async Task should_return_datetime_without_parameters_hours_async()
+        {
+            // Arrange
+            var caching = new Caching();
+
+            // Act
+            var ret = await caching.GetOrSetObjectFromCacheAsync(CacheKeyTestDateTimeKey, 20, GetDateTime, interval: CacheTimeInterval.Hours);
 
             // Assert
             // Only for asserting purposes, no need to use GetValueFromCache, just use the GetOrSetObjectFromCacheAsync
@@ -39,7 +74,7 @@ namespace EasyMemoryCache.Tests
             var caching = new Caching();
 
             // Act
-            var ret = await caching.GetOrSetObjectFromCacheAsync(CacheKeyTestIntegerKey, 20, GetInteger);
+            var ret = await caching.GetOrSetObjectFromCacheAsync(CacheKeyTestIntegerKey, 20, GetInteger, interval: CacheTimeInterval.Minutes);
 
             // Assert
             // Only for asserting purposes, no need to use GetValueFromCache, just use the GetOrSetObjectFromCacheAsync

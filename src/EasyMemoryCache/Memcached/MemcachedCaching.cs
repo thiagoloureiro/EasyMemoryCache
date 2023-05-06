@@ -1,6 +1,8 @@
-﻿using System;
+﻿using EasyMemoryCache.Configuration;
+using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
+using EasyMemoryCache.Extensions;
 
 namespace EasyMemoryCache.Memcached
 {
@@ -13,8 +15,8 @@ namespace EasyMemoryCache.Memcached
             _memcachedClient = memcachedClient;
         }
 
-        public T GetOrSetObjectFromCache<T>(string cacheItemName, int cacheTimeInMinutes, Func<T> objectSettingFunction,
-            bool cacheEmptyList = false)
+        public T GetOrSetObjectFromCache<T>(string cacheItemName, int cacheTime, Func<T> objectSettingFunction,
+            bool cacheEmptyList = false, CacheTimeInterval interval = CacheTimeInterval.Minutes)
         {
             T result;
 
@@ -22,7 +24,7 @@ namespace EasyMemoryCache.Memcached
             if (data == null)
             {
                 result = objectSettingFunction();
-                _memcachedClient.Set(cacheItemName, result, cacheTimeInMinutes / 60);
+                _memcachedClient.Set(cacheItemName, result, ConvertInterval.Convert(interval, cacheTime));
             }
             else
             {
@@ -31,10 +33,10 @@ namespace EasyMemoryCache.Memcached
             return result;
         }
 
-        public async Task<T> GetOrSetObjectFromCacheAsync<T>(string cacheItemName, int cacheTimeInMinutes, Func<Task<T>> objectSettingFunction,
-            bool cacheEmptyList = false)
+        public async Task<T> GetOrSetObjectFromCacheAsync<T>(string cacheItemName, int cacheTime, Func<Task<T>> objectSettingFunction,
+            bool cacheEmptyList = false, CacheTimeInterval interval = CacheTimeInterval.Minutes)
         {
-            return await _memcachedClient.GetValueOrCreateAsync(cacheItemName, cacheTimeInMinutes / 60,
+            return await _memcachedClient.GetValueOrCreateAsync(cacheItemName, ConvertInterval.Convert(interval, cacheTime),
                 objectSettingFunction);
         }
 
@@ -53,14 +55,14 @@ namespace EasyMemoryCache.Memcached
             await _memcachedClient.FlushAllAsync();
         }
 
-        public void SetValueToCache(string key, object value, int cacheTimeInMinutes = 120)
+        public void SetValueToCache(string key, object value, int cacheTime = 120, CacheTimeInterval interval = CacheTimeInterval.Minutes)
         {
-            _memcachedClient.Add(key, value, cacheTimeInMinutes / 60);
+            _memcachedClient.Add(key, value, ConvertInterval.Convert(interval, cacheTime));
         }
 
-        public async Task SetValueToCacheAsync(string key, object value, int cacheTimeInMinutes = 120)
+        public async Task SetValueToCacheAsync(string key, object value, int cacheTime = 120, CacheTimeInterval interval = CacheTimeInterval.Minutes)
         {
-            await _memcachedClient.AddAsync(key, value, cacheTimeInMinutes / 60).ConfigureAwait(false);
+            await _memcachedClient.AddAsync(key, value, ConvertInterval.Convert(interval, cacheTime)).ConfigureAwait(false);
         }
 
         public object GetValueFromCache(string key)

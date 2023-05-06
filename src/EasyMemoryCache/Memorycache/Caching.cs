@@ -6,12 +6,15 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Threading.Tasks;
+using EasyMemoryCache.Configuration;
+using EasyMemoryCache.Memcached.Memcached.Transcoders;
 
 namespace EasyMemoryCache.Memorycache
 {
     public class Caching : ICaching, IDisposable
     {
         private readonly MemoryCache _myCache;
+
         private readonly AsyncKeyedLocker<string> _cacheLock = new AsyncKeyedLocker<string>(o =>
         {
             o.PoolSize = 20;
@@ -28,7 +31,7 @@ namespace EasyMemoryCache.Memorycache
             _myCache = (MemoryCache)cache;
         }
 
-        public T GetOrSetObjectFromCache<T>(string cacheItemName, int cacheTimeInMinutes, Func<T> objectSettingFunction, bool cacheEmptyList = false)
+        public T GetOrSetObjectFromCache<T>(string cacheItemName, int cacheTime, Func<T> objectSettingFunction, bool cacheEmptyList = false, CacheTimeInterval interval = CacheTimeInterval.Minutes)
         {
             T cachedObject = default;
 
@@ -51,17 +54,17 @@ namespace EasyMemoryCache.Memorycache
                             if (((ICollection)cachedObject).Count > 0)
                             {
                                 _myCache.Set(cacheItemName, cachedObject,
-                                    DateTimeOffset.Now.AddMinutes(cacheTimeInMinutes));
+                                    DateTimeOffset.Now.AddSeconds(ConvertInterval.Convert(interval, cacheTime)));
                             }
                             else if (cacheEmptyList)
                             {
                                 _myCache.Set(cacheItemName, cachedObject,
-                                    DateTimeOffset.Now.AddMinutes(cacheTimeInMinutes));
+                                    DateTimeOffset.Now.AddSeconds(ConvertInterval.Convert(interval, cacheTime)));
                             }
                         }
                         else
                         {
-                            _myCache.Set(cacheItemName, cachedObject, DateTimeOffset.Now.AddMinutes(cacheTimeInMinutes));
+                            _myCache.Set(cacheItemName, cachedObject, DateTimeOffset.Now.AddSeconds(ConvertInterval.Convert(interval, cacheTime)));
                         }
                     }
                     catch (Exception err)
@@ -74,7 +77,7 @@ namespace EasyMemoryCache.Memorycache
             return cachedObject;
         }
 
-        public async Task<T> GetOrSetObjectFromCacheAsync<T>(string cacheItemName, int cacheTimeInMinutes, Func<Task<T>> objectSettingFunction, bool cacheEmptyList = false)
+        public async Task<T> GetOrSetObjectFromCacheAsync<T>(string cacheItemName, int cacheTime, Func<Task<T>> objectSettingFunction, bool cacheEmptyList = false, CacheTimeInterval interval = CacheTimeInterval.Minutes)
         {
             T cachedObject = default;
             var cacheObj = _myCache.Get(cacheItemName);
@@ -97,17 +100,17 @@ namespace EasyMemoryCache.Memorycache
                             if (((ICollection)cachedObject).Count > 0)
                             {
                                 _myCache.Set(cacheItemName, cachedObject,
-                                    DateTimeOffset.Now.AddMinutes(cacheTimeInMinutes));
+                                    DateTimeOffset.Now.AddSeconds(ConvertInterval.Convert(interval, cacheTime)));
                             }
                             else if (cacheEmptyList)
                             {
                                 _myCache.Set(cacheItemName, cachedObject,
-                                    DateTimeOffset.Now.AddMinutes(cacheTimeInMinutes));
+                                    DateTimeOffset.Now.AddSeconds(ConvertInterval.Convert(interval, cacheTime)));
                             }
                         }
                         else
                         {
-                            _myCache.Set(cacheItemName, cachedObject, DateTimeOffset.Now.AddMinutes(cacheTimeInMinutes));
+                            _myCache.Set(cacheItemName, cachedObject, DateTimeOffset.Now.AddSeconds(ConvertInterval.Convert(interval, cacheTime)));
                         }
                     }
                     catch (Exception err)
@@ -138,14 +141,14 @@ namespace EasyMemoryCache.Memorycache
             });
         }
 
-        public void SetValueToCache(string key, object value, int cacheTimeInMinutes = 120)
+        public void SetValueToCache(string key, object value, int cacheTime = 120, CacheTimeInterval interval = CacheTimeInterval.Minutes)
         {
-            _myCache.Set(key, value, DateTimeOffset.Now.AddMinutes(cacheTimeInMinutes));
+            _myCache.Set(key, value, DateTimeOffset.Now.AddSeconds(ConvertInterval.Convert(interval, cacheTime)));
         }
 
-        public async Task SetValueToCacheAsync(string key, object value, int cacheTimeInMinutes = 120)
+        public async Task SetValueToCacheAsync(string key, object value, int cacheTime = 120, CacheTimeInterval interval = CacheTimeInterval.Minutes)
         {
-            await Task.Run(() => _myCache.Set(key, value, DateTimeOffset.Now.AddMinutes(cacheTimeInMinutes)));
+            await Task.Run(() => _myCache.Set(key, value, DateTimeOffset.Now.AddSeconds(ConvertInterval.Convert(interval, cacheTime))));
         }
 
         public object GetValueFromCache(string key)
