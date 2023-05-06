@@ -25,7 +25,7 @@ namespace EasyMemoryCache.Accessors
 
         protected abstract Task SetInternalAsync(string key, object value, DistributedCacheEntryOptions options);
 
-        public void Set(string key, object value, double cacheTime)
+        public void Set(string key, object value, int cacheTime)
         {
             if (value == null)
             {
@@ -40,7 +40,7 @@ namespace EasyMemoryCache.Accessors
             SetInternal(key, value, entryOptions);
         }
 
-        public async Task SetAsync(string key, object value, double cacheTime)
+        public async Task SetAsync(string key, object value, int cacheTime)
         {
             if (value == null)
             {
