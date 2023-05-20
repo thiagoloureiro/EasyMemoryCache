@@ -20,4 +20,12 @@
         Redis = 2,
         Memcached = 3
     }
+
+    public enum CacheTimeInterval
+    {
+        Seconds = 1,
+        Minutes = 2,
+        Hours = 3,
+        Days = 4
+    }
 }

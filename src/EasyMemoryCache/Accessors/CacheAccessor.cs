@@ -25,7 +25,7 @@ namespace EasyMemoryCache.Accessors
 
         protected abstract Task SetInternalAsync(string key, object value, DistributedCacheEntryOptions options);
 
-        public void Set(string key, object value, int cacheTimeInMinutes = 120)
+        public void Set(string key, object value, int cacheTime)
         {
             if (value == null)
             {
@@ -34,13 +34,13 @@ namespace EasyMemoryCache.Accessors
 
             var entryOptions = new DistributedCacheEntryOptions()
             {
-                AbsoluteExpirationRelativeToNow = TimeSpan.FromMinutes(cacheTimeInMinutes)
+                AbsoluteExpirationRelativeToNow = TimeSpan.FromSeconds(cacheTime)
             };
 
             SetInternal(key, value, entryOptions);
         }
 
-        public async Task SetAsync(string key, object value, int cacheTimeInMinutes = 120)
+        public async Task SetAsync(string key, object value, int cacheTime)
         {
             if (value == null)
             {
@@ -49,7 +49,7 @@ namespace EasyMemoryCache.Accessors
 
             var entryOptions = new DistributedCacheEntryOptions()
             {
-                AbsoluteExpirationRelativeToNow = TimeSpan.FromMinutes(cacheTimeInMinutes)
+                AbsoluteExpirationRelativeToNow = TimeSpan.FromSeconds(cacheTime)
             };
 
             await SetInternalAsync(key, value, entryOptions);

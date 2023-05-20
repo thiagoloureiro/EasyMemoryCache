@@ -1,4 +1,5 @@
-﻿using System;
+﻿using EasyMemoryCache.Configuration;
+using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 
@@ -6,9 +7,9 @@ namespace EasyMemoryCache
 {
     public interface ICaching
     {
-        T GetOrSetObjectFromCache<T>(string cacheItemName, int cacheTimeInMinutes, Func<T> objectSettingFunction, bool cacheEmptyList = false);
+        T GetOrSetObjectFromCache<T>(string cacheItemName, int cacheTime, Func<T> objectSettingFunction, bool cacheEmptyList = false, CacheTimeInterval interval = CacheTimeInterval.Minutes);
 
-        Task<T> GetOrSetObjectFromCacheAsync<T>(string cacheItemName, int cacheTimeInMinutes, Func<Task<T>> objectSettingFunction, bool cacheEmptyList = false);
+        Task<T> GetOrSetObjectFromCacheAsync<T>(string cacheItemName, int cacheTime, Func<Task<T>> objectSettingFunction, bool cacheEmptyList = false, CacheTimeInterval interval = CacheTimeInterval.Minutes);
 
         void Invalidate(string key);
 
@@ -16,9 +17,9 @@ namespace EasyMemoryCache
 
         Task InvalidateAllAsync();
 
-        void SetValueToCache(string key, object value, int cacheTimeInMinutes = 120);
+        void SetValueToCache(string key, object value, int cacheTime = 120, CacheTimeInterval interval = CacheTimeInterval.Minutes);
 
-        Task SetValueToCacheAsync(string key, object value, int cacheTimeInMinutes = 120);
+        Task SetValueToCacheAsync(string key, object value, int cacheTime = 120, CacheTimeInterval interval = CacheTimeInterval.Minutes);
 
         object GetValueFromCache(string key);
 

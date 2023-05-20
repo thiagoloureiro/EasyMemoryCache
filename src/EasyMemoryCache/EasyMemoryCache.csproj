@@ -14,9 +14,9 @@
 		<Copyright>2023© Thiago Loureiro</Copyright>
 		<PackageLicenseFile>LICENSE</PackageLicenseFile>
 		<PackageReleaseNotes>Included method to return list of keys (improved)</PackageReleaseNotes>
-		<Version>1.0.32</Version>
-		<AssemblyVersion>1.0.32.0</AssemblyVersion>
-		<FileVersion>1.0.32.0</FileVersion>
+		<Version>1.0.33</Version>
+		<AssemblyVersion>1.0.33.0</AssemblyVersion>
+		<FileVersion>1.0.33.0</FileVersion>
 		<Icon>https://raw.githubusercontent.com/thiagoloureiro/EasyMemoryCache/master/cacheicon.png</Icon>
 		<PackageIcon>cacheicon.png</PackageIcon>
 	</PropertyGroup>
