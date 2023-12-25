@@ -1,7 +1,7 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
 	<PropertyGroup>
-		<TargetFrameworks>net6.0;net7.0</TargetFrameworks>
+		<TargetFrameworks>net6.0;net7.0;net8.0</TargetFrameworks>
 		<AllowUnsafeBlocks>true</AllowUnsafeBlocks>
 		<GeneratePackageOnBuild>true</GeneratePackageOnBuild>
 		<Authors>Thiago Loureiro</Authors>
@@ -11,23 +11,23 @@
 		<RepositoryType>GitHub</RepositoryType>
 		<PackageTags>memorycache, caching, nuget, cache</PackageTags>
 		<PackageProjectUrl>https://github.com/thiagoloureiro/EasyMemoryCache</PackageProjectUrl>
-		<Copyright>2023© Thiago Loureiro</Copyright>
+		<Copyright>2024© Thiago Loureiro</Copyright>
 		<PackageLicenseFile>LICENSE</PackageLicenseFile>
 		<PackageReleaseNotes>Packages updates and framework support</PackageReleaseNotes>
-		<Version>1.0.35</Version>
-		<AssemblyVersion>1.0.35.0</AssemblyVersion>
-		<FileVersion>1.0.35.0</FileVersion>
+		<Version>1.0.36</Version>
+		<AssemblyVersion>1.0.36.0</AssemblyVersion>
+		<FileVersion>1.0.36.0</FileVersion>
 		<Icon>https://raw.githubusercontent.com/thiagoloureiro/EasyMemoryCache/master/cacheicon.png</Icon>
 		<PackageIcon>cacheicon.png</PackageIcon>
 	</PropertyGroup>
 
 	<ItemGroup>
-		<PackageReference Include="AsyncKeyedLock" Version="6.2.2" />
+		<PackageReference Include="AsyncKeyedLock" Version="6.2.4" />
 		<PackageReference Include="Microsoft.Extensions.Caching.Memory" Version="7.0.0" />
 		<PackageReference Include="Microsoft.Extensions.Caching.StackExchangeRedis" Version="7.0.13" />
 		<PackageReference Include="Microsoft.NETCore.Platforms" Version="7.0.4" />
 		<PackageReference Include="Newtonsoft.Json" Version="13.0.3" />
-		<PackageReference Include="protobuf-net" Version="3.2.26" />
+		<PackageReference Include="protobuf-net" Version="3.2.30" />
 		<PackageReference Include="Newtonsoft.Json.Bson" Version="1.0.2" />
 		<PackageReference Include="System.Threading.Tasks.Extensions" Version="4.5.4" />
 		<PackageReference Include="Microsoft.Extensions.Configuration.Abstractions" Version="7.0.0" />
