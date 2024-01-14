@@ -147,8 +147,8 @@ namespace EasyMemoryCache.Memcached.Memcached
             var result = new PooledSocketResult();
             if (!this.isInitialized)
             {
-                using var releaser = poolInitLocker.Lock(_initPoolTimeout, out _);
-                if (!releaser.EnteredSemaphore)
+                using poolInitLocker.Lock(_initPoolTimeout, out bool entered);
+                if (!entered)
                 {
                     return result.Fail("Timeout to poolInitSemaphore.Wait", _logger) as PooledSocketResult;
                 }
