@@ -31,7 +31,7 @@ namespace EasyMemoryCache.Memcached.Memcached
         private readonly ISocketPoolConfiguration _config;
         private InternalPoolImpl internalPoolImpl;
         private bool isInitialized = false;
-        private AsyncNonKeyedLocker poolInitLocker = new(1);
+        private readonly AsyncNonKeyedLocker poolInitLocker = new(1);
         private readonly TimeSpan _initPoolTimeout;
         private bool _useSslStream;
 
