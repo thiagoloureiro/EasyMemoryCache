@@ -147,18 +147,20 @@ namespace EasyMemoryCache.Memcached.Memcached
             var result = new PooledSocketResult();
             if (!this.isInitialized)
             {
-                using poolInitLocker.Lock(_initPoolTimeout, out bool entered);
-                if (!entered)
+                using (poolInitLocker.Lock(_initPoolTimeout, out bool entered))
                 {
-                    return result.Fail("Timeout to poolInitSemaphore.Wait", _logger) as PooledSocketResult;
-                }
+                    if (!entered)
+                    {
+                        return result.Fail("Timeout to poolInitSemaphore.Wait", _logger) as PooledSocketResult;
+                    }
 
-                if (!this.isInitialized)
-                {
-                    var startTime = DateTime.Now;
-                    this.internalPoolImpl.InitPool();
-                    this.isInitialized = true;
-                    _logger.LogInformation("MemcachedInitPool-cost: {0}ms", (DateTime.Now - startTime).TotalMilliseconds);
+                    if (!this.isInitialized)
+                    {
+                        var startTime = DateTime.Now;
+                        this.internalPoolImpl.InitPool();
+                        this.isInitialized = true;
+                        _logger.LogInformation("MemcachedInitPool-cost: {0}ms", (DateTime.Now - startTime).TotalMilliseconds);
+                    }
                 }
             }
 
