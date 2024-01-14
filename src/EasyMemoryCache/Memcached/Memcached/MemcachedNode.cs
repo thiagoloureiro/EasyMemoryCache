@@ -7,6 +7,7 @@ using System.Net;
 using System.Net.Sockets;
 using System.Threading;
 using System.Threading.Tasks;
+using AsyncKeyedLock;
 using EasyMemoryCache.Memcached.Configuration;
 using EasyMemoryCache.Memcached.Memcached.FailurePolicy;
 using EasyMemoryCache.Memcached.Memcached.Results;
@@ -30,7 +31,7 @@ namespace EasyMemoryCache.Memcached.Memcached
         private readonly ISocketPoolConfiguration _config;
         private InternalPoolImpl internalPoolImpl;
         private bool isInitialized = false;
-        private SemaphoreSlim poolInitSemaphore = new SemaphoreSlim(1, 1);
+        private AsyncNonKeyedLocker poolInitLocker = new(1);
         private readonly TimeSpan _initPoolTimeout;
         private bool _useSslStream;
 
@@ -146,24 +147,18 @@ namespace EasyMemoryCache.Memcached.Memcached
             var result = new PooledSocketResult();
             if (!this.isInitialized)
             {
-                if (!poolInitSemaphore.Wait(_initPoolTimeout))
+                using var releaser = poolInitLocker.Lock(_initPoolTimeout, out _);
+                if (!releaser.EnteredSemaphore)
                 {
                     return result.Fail("Timeout to poolInitSemaphore.Wait", _logger) as PooledSocketResult;
                 }
 
-                try
+                if (!this.isInitialized)
                 {
-                    if (!this.isInitialized)
-                    {
-                        var startTime = DateTime.Now;
-                        this.internalPoolImpl.InitPool();
-                        this.isInitialized = true;
-                        _logger.LogInformation("MemcachedInitPool-cost: {0}ms", (DateTime.Now - startTime).TotalMilliseconds);
-                    }
-                }
-                finally
-                {
-                    poolInitSemaphore.Release();
+                    var startTime = DateTime.Now;
+                    this.internalPoolImpl.InitPool();
+                    this.isInitialized = true;
+                    _logger.LogInformation("MemcachedInitPool-cost: {0}ms", (DateTime.Now - startTime).TotalMilliseconds);
                 }
             }
 
@@ -190,24 +185,18 @@ namespace EasyMemoryCache.Memcached.Memcached
             var result = new PooledSocketResult();
             if (!this.isInitialized)
             {
-                if (!await poolInitSemaphore.WaitAsync(_initPoolTimeout))
+                using var releaser = await poolInitLocker.LockAsync(_initPoolTimeout);
+                if (!releaser.EnteredSemaphore)
                 {
                     return result.Fail("Timeout to poolInitSemaphore.Wait", _logger) as PooledSocketResult;
                 }
 
-                try
+                if (!this.isInitialized)
                 {
-                    if (!this.isInitialized)
-                    {
-                        var startTime = DateTime.Now;
-                        await this.internalPoolImpl.InitPoolAsync();
-                        this.isInitialized = true;
-                        _logger.LogInformation("MemcachedInitPool-cost: {0}ms", (DateTime.Now - startTime).TotalMilliseconds);
-                    }
-                }
-                finally
-                {
-                    poolInitSemaphore.Release();
+                    var startTime = DateTime.Now;
+                    await this.internalPoolImpl.InitPoolAsync();
+                    this.isInitialized = true;
+                    _logger.LogInformation("MemcachedInitPool-cost: {0}ms", (DateTime.Now - startTime).TotalMilliseconds);
                 }
             }
 
@@ -249,7 +238,7 @@ namespace EasyMemoryCache.Memcached.Memcached
 
                 this.isDisposed = true;
                 this.internalPoolImpl.Dispose();
-                this.poolInitSemaphore.Dispose();
+                this.poolInitLocker.Dispose();
             }
         }
 
