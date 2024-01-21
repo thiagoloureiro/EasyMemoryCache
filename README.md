@@ -13,7 +13,7 @@ Open Package Manager Console and run:
 ```Install-Package EasyMemoryCache```
 
 # Usage:
-First register the component in your Application:
+First, register the component in your Application:
 
 ```C#
 .AddEasyCache(new CacheSettings() { ... })
@@ -52,7 +52,7 @@ For:
 InMemory cache will be used instead of Redis
 
 
-### Then inject the interface where do you want to use, example:
+### Then inject the interface where do you want to use, for example:
 ```C#
 private readonly ICaching _caching;
 private string UserKeyCache => "UserKey";
@@ -77,4 +77,4 @@ var lstStringFromAsync = await _caching.GetOrSetObjectFromCacheAsync(CacheKeyNam
 var lstString = _caching.GetOrSetObjectFromCache(CacheKeyName, 20, ReturnListOfString);
 ```
 
-## Check the code sample in src directory
+## Check the code sample in the src directory
