@@ -13,10 +13,10 @@
 		<PackageProjectUrl>https://github.com/thiagoloureiro/EasyMemoryCache</PackageProjectUrl>
 		<Copyright>2024© Thiago Loureiro</Copyright>
 		<PackageLicenseFile>LICENSE</PackageLicenseFile>
-		<PackageReleaseNotes>Bump AsyncKeyedLock from 6.2.1 to 6.2.2</PackageReleaseNotes>
-		<Version>2.0.1</Version>
-		<AssemblyVersion>2.0.1.0</AssemblyVersion>
-		<FileVersion>2.0.1.0</FileVersion>
+		<PackageReleaseNotes>Bump AsyncKeyedLock from 6.3.3 to 6.3.4</PackageReleaseNotes>
+		<Version>2.0.2</Version>
+		<AssemblyVersion>2.0.2.0</AssemblyVersion>
+		<FileVersion>2.0.2.0</FileVersion>
 		<Icon>https://raw.githubusercontent.com/thiagoloureiro/EasyMemoryCache/master/cacheicon.png</Icon>
 		<PackageIcon>cacheicon.png</PackageIcon>
 	</PropertyGroup>
