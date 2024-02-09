@@ -40,9 +40,9 @@ services.AddEasyCache(Configuration.GetSection("CacheSettings").Get<CacheSetting
 ### Configuration example:
 ```json
 "CacheSettings": {
+    "CacheProvider": "Redis",
     "IsDistributed": true,
-    "RedisConnectionString": "host:port",
-    "RedisPassword": "Optional password"
+    "RedisConnectionString": "localhost:6379,password=xxx=,ssl=False,abortConnect=False"
   }
 ```
 For:
