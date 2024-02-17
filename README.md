@@ -47,7 +47,8 @@ services.AddEasyCache(Configuration.GetSection("CacheSettings").Get<CacheSetting
 ```
 For:
 ```json
- "IsDistributed": false
+ "IsDistributed": false,
+ "CacheProvider": "MemoryCache",
 ```
 InMemory cache will be used instead of Redis
 
