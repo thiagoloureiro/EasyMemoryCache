@@ -37,7 +37,7 @@ return caching;
 services.AddEasyCache(Configuration.GetSection("CacheSettings").Get<CacheSettings>());
 ```
 
-### Configuration example:
+### Configuration example: (Redis)
 ```json
 "CacheSettings": {
     "CacheProvider": "Redis",
@@ -45,7 +45,7 @@ services.AddEasyCache(Configuration.GetSection("CacheSettings").Get<CacheSetting
     "RedisConnectionString": "localhost:6379,password=xxx=,ssl=False,abortConnect=False"
   }
 ```
-For:
+For MemoryCache
 ```json
  "IsDistributed": false,
  "CacheProvider": "MemoryCache",
