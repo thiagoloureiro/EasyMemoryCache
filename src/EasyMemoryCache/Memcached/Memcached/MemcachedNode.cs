@@ -135,13 +135,8 @@ namespace EasyMemoryCache.Memcached.Memcached
 
                     Interlocked.Exchange(ref this.internalPoolImpl, newPool);
 
-                    try
-                    {
-                        oldPool.Dispose();
-                    }
-                    catch
-                    {
-                    }
+
+                    oldPool.Dispose();
                 }
 
                 return true;
@@ -234,13 +229,7 @@ namespace EasyMemoryCache.Memcached.Memcached
 
         ~MemcachedNode()
         {
-            try
-            {
-                ((IDisposable)this).Dispose();
-            }
-            catch
-            {
-            }
+            ((IDisposable)this).Dispose();
         }
 
         /// <summary>

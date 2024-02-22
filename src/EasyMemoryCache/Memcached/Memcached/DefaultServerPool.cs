@@ -51,13 +51,7 @@ namespace EasyMemoryCache.Memcached.Memcached
 
         ~DefaultServerPool()
         {
-            try
-            {
-                ((IDisposable)this).Dispose();
-            }
-            catch
-            {
-            }
+            ((IDisposable)this).Dispose();
         }
 
         protected virtual IMemcachedNode CreateNode(EndPoint endpoint)
