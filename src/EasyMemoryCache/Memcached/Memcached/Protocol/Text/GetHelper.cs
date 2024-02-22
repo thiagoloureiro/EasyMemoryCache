@@ -14,7 +14,9 @@ namespace EasyMemoryCache.Memcached.Memcached.Protocol.Text
             string response = TextSocketHelper.ReadResponse(socket);
 
             if (String.Compare(response, "END", StringComparison.Ordinal) != 0)
+            {
                 throw new MemcachedClientException("No END was received.");
+            }
         }
 
         public static GetResponse ReadItem(PooledSocket socket)
@@ -22,10 +24,14 @@ namespace EasyMemoryCache.Memcached.Memcached.Protocol.Text
             string description = TextSocketHelper.ReadResponse(socket);
 
             if (String.Compare(description, "END", StringComparison.Ordinal) == 0)
+            {
                 return null;
+            }
 
             if (description.Length < 6 || String.Compare(description, 0, "VALUE ", 0, 6, StringComparison.Ordinal) != 0)
+            {
                 throw new MemcachedClientException("No VALUE response received.\r\n" + description);
+            }
 
             ulong cas = 0;
             string[] parts = description.Split(' ');
@@ -33,7 +39,9 @@ namespace EasyMemoryCache.Memcached.Memcached.Protocol.Text
             if (parts.Length == 5)
             {
                 if (!UInt64.TryParse(parts[4], out cas))
+                {
                     throw new MemcachedClientException("Invalid CAS VALUE received.");
+                }
             }
             else if (parts.Length < 4)
             {
@@ -52,7 +60,10 @@ namespace EasyMemoryCache.Memcached.Memcached.Protocol.Text
             GetResponse retval = new GetResponse(parts[1], flags, cas, allData);
 
             if (log.IsDebugEnabled)
-                log.DebugFormat("Received value. Data type: {0}, size: {1}.", retval.Item.Flags, retval.Item.Data.Count);
+            {
+                log.DebugFormat("Received value. Data type: {0}, size: {1}.", retval.Item.Flags,
+                    retval.Item.Data.Count);
+            }
 
             return retval;
         }
@@ -63,9 +74,11 @@ namespace EasyMemoryCache.Memcached.Memcached.Protocol.Text
     public class GetResponse
     {
         private GetResponse()
-        { }
+        {
+        }
 
-        public GetResponse(string key, ushort flags, ulong casValue, byte[] data) : this(key, flags, casValue, data, 0, data.Length)
+        public GetResponse(string key, ushort flags, ulong casValue, byte[] data) : this(key, flags, casValue, data, 0,
+            data.Length)
         {
         }
 

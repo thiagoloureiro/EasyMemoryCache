@@ -74,7 +74,10 @@ namespace EasyMemoryCache.Memcached.Memcached.Protocol.Binary
                 {
                     var data = response.Data;
                     if (data.Count != 8)
-                        return result.Fail("Result must be 8 bytes long, received: " + data.Count, new InvalidOperationException());
+                    {
+                        return result.Fail("Result must be 8 bytes long, received: " + data.Count,
+                            new InvalidOperationException());
+                    }
 
                     this.result = BinaryConverter.DecodeUInt64(data.Array, data.Offset);
                 }

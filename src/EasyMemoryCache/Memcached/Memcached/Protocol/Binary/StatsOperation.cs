@@ -23,7 +23,9 @@ namespace EasyMemoryCache.Memcached.Memcached.Protocol.Binary
         {
             var request = new BinaryRequest(OpCode.Stat);
             if (!String.IsNullOrEmpty(this.type))
+            {
                 request.Key = this.type;
+            }
 
             return request;
         }
@@ -40,7 +42,8 @@ namespace EasyMemoryCache.Memcached.Memcached.Protocol.Binary
 
                 var data = response.Data;
                 var key = BinaryConverter.DecodeKey(data.Array, data.Offset, response.KeyLength);
-                var value = BinaryConverter.DecodeKey(data.Array, data.Offset + response.KeyLength, data.Count - response.KeyLength);
+                var value = BinaryConverter.DecodeKey(data.Array, data.Offset + response.KeyLength,
+                    data.Count - response.KeyLength);
 
                 serverData[key] = value;
             }
@@ -69,7 +72,8 @@ namespace EasyMemoryCache.Memcached.Memcached.Protocol.Binary
 
                 var data = response.Data;
                 var key = BinaryConverter.DecodeKey(data.Array, data.Offset, response.KeyLength);
-                var value = BinaryConverter.DecodeKey(data.Array, data.Offset + response.KeyLength, data.Count - response.KeyLength);
+                var value = BinaryConverter.DecodeKey(data.Array, data.Offset + response.KeyLength,
+                    data.Count - response.KeyLength);
 
                 serverData[key] = value;
             }

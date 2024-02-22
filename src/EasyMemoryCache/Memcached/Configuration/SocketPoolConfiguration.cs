@@ -67,7 +67,9 @@ namespace EasyMemoryCache.Memcached.Configuration
             set
             {
                 if (value < TimeSpan.Zero)
+                {
                     throw new ArgumentOutOfRangeException("value", "value must be positive");
+                }
 
                 this._queueTimeout = value;
             }
@@ -79,7 +81,9 @@ namespace EasyMemoryCache.Memcached.Configuration
             set
             {
                 if (value < TimeSpan.Zero)
+                {
                     throw new ArgumentOutOfRangeException("value", "value must be positive");
+                }
 
                 _initPoolTimeout = value;
             }
@@ -91,7 +95,9 @@ namespace EasyMemoryCache.Memcached.Configuration
             set
             {
                 if (value < TimeSpan.Zero)
+                {
                     throw new ArgumentOutOfRangeException("value", "value must be positive");
+                }
 
                 this._deadTimeout = value;
             }

@@ -113,21 +113,30 @@ namespace EasyMemoryCache.Memcached.Memcached.Protocol.Binary
 
         public static byte[] EncodeKey(string key)
         {
-            if (String.IsNullOrEmpty(key)) return null;
+            if (String.IsNullOrEmpty(key))
+            {
+                return null;
+            }
 
             return Encoding.UTF8.GetBytes(key);
         }
 
         public static string DecodeKey(byte[] data)
         {
-            if (data == null || data.Length == 0) return null;
+            if (data == null || data.Length == 0)
+            {
+                return null;
+            }
 
             return Encoding.UTF8.GetString(data);
         }
 
         public static string DecodeKey(byte[] data, int index, int count)
         {
-            if (data == null || data.Length == 0 || count == 0) return null;
+            if (data == null || data.Length == 0 || count == 0)
+            {
+                return null;
+            }
 
             return Encoding.UTF8.GetString(data, index, count);
         }

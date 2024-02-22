@@ -39,13 +39,19 @@ namespace EasyMemoryCache.Memcached
         public IRemoveOperationResultFactory RemoveOperationResultFactory { get; set; }
 
         protected IServerPool Pool
-        { get { return this.pool; } }
+        {
+            get { return this.pool; }
+        }
 
         protected IMemcachedKeyTransformer KeyTransformer
-        { get { return this.keyTransformer; } }
+        {
+            get { return this.keyTransformer; }
+        }
 
         protected ITranscoder Transcoder
-        { get { return this.transcoder; } }
+        {
+            get { return this.transcoder; }
+        }
 
         public MemcachedClient(ILoggerFactory loggerFactory, IMemcachedClientConfiguration configuration)
         {
@@ -72,9 +78,20 @@ namespace EasyMemoryCache.Memcached
         [Obsolete]
         private MemcachedClient(IServerPool pool, IMemcachedKeyTransformer keyTransformer, ITranscoder transcoder)
         {
-            if (pool == null) throw new ArgumentNullException("pool");
-            if (keyTransformer == null) throw new ArgumentNullException("keyTransformer");
-            if (transcoder == null) throw new ArgumentNullException("transcoder");
+            if (pool == null)
+            {
+                throw new ArgumentNullException("pool");
+            }
+
+            if (keyTransformer == null)
+            {
+                throw new ArgumentNullException("keyTransformer");
+            }
+
+            if (transcoder == null)
+            {
+                throw new ArgumentNullException("transcoder");
+            }
 
             this.keyTransformer = keyTransformer;
             this.transcoder = transcoder;
@@ -85,7 +102,11 @@ namespace EasyMemoryCache.Memcached
 
         private void StartPool()
         {
-            this.pool.NodeFailed += (n) => { var f = this.NodeFailed; if (f != null) f(n); };
+            this.pool.NodeFailed += (n) =>
+            {
+                var f = this.NodeFailed;
+                if (f != null) f(n);
+            };
             this.pool.Start();
         }
 
@@ -164,7 +185,8 @@ namespace EasyMemoryCache.Memcached
             }
         }
 
-        private bool CreateGetCommand(string key, out IGetOperationResult result, out IMemcachedNode node, out IGetOperation command)
+        private bool CreateGetCommand(string key, out IGetOperationResult result, out IMemcachedNode node,
+            out IGetOperation command)
         {
             result = new DefaultGetOperationResultFactory().Create();
             var hashedKey = this.keyTransformer.Transform(key);
@@ -183,7 +205,8 @@ namespace EasyMemoryCache.Memcached
             return true;
         }
 
-        private bool CreateGetCommand<T>(string key, out IGetOperationResult<T> result, out IMemcachedNode node, out IGetOperation command)
+        private bool CreateGetCommand<T>(string key, out IGetOperationResult<T> result, out IMemcachedNode node,
+            out IGetOperation command)
         {
             result = new DefaultGetOperationResultFactory<T>().Create();
             var hashedKey = this.keyTransformer.Transform(key);
@@ -202,7 +225,8 @@ namespace EasyMemoryCache.Memcached
             return true;
         }
 
-        private IGetOperationResult BuildGetCommandResult(IGetOperationResult result, IGetOperation command, IOperationResult commandResult)
+        private IGetOperationResult BuildGetCommandResult(IGetOperationResult result, IGetOperation command,
+            IOperationResult commandResult)
         {
             if (commandResult.Success)
             {
@@ -218,7 +242,8 @@ namespace EasyMemoryCache.Memcached
             return result;
         }
 
-        private IGetOperationResult<T> BuildGetCommandResult<T>(IGetOperationResult<T> result, IGetOperation command, IOperationResult commandResult)
+        private IGetOperationResult<T> BuildGetCommandResult<T>(IGetOperationResult<T> result, IGetOperation command,
+            IOperationResult commandResult)
         {
             if (commandResult.Success)
             {
@@ -306,6 +331,7 @@ namespace EasyMemoryCache.Memcached
                     _logger.LogError(ex, $"{nameof(AddAsync)}(\"{key}\", ..., {cacheSeconds})");
                 }
             }
+
             return value;
         }
 
@@ -345,8 +371,8 @@ namespace EasyMemoryCache.Memcached
             CasResult<T> tmp;
 
             return this.TryGetWithCas(key, out tmp)
-                    ? new CasResult<T> { Cas = tmp.Cas, Result = tmp.Result }
-                    : new CasResult<T> { Cas = tmp.Cas, Result = default };
+                ? new CasResult<T> { Cas = tmp.Cas, Result = tmp.Result }
+                : new CasResult<T> { Cas = tmp.Cas, Result = default };
         }
 
         public bool TryGetWithCas(string key, out CasResult<object> value)
@@ -471,17 +497,20 @@ namespace EasyMemoryCache.Memcached
             ulong tmp = 0;
             int status;
 
-            return this.PerformStore(mode, key, value, MemcachedClient.GetExpiration(validFor, null), ref tmp, out status).Success;
+            return this.PerformStore(mode, key, value, MemcachedClient.GetExpiration(validFor, null), ref tmp,
+                out status).Success;
         }
 
         public async Task<bool> StoreAsync(StoreMode mode, string key, object value, DateTime expiresAt)
         {
-            return (await this.PerformStoreAsync(mode, key, value, MemcachedClient.GetExpiration(null, expiresAt))).Success;
+            return (await this.PerformStoreAsync(mode, key, value, MemcachedClient.GetExpiration(null, expiresAt)))
+                .Success;
         }
 
         public async Task<bool> StoreAsync(StoreMode mode, string key, object value, TimeSpan validFor)
         {
-            return (await this.PerformStoreAsync(mode, key, value, MemcachedClient.GetExpiration(validFor, null))).Success;
+            return (await this.PerformStoreAsync(mode, key, value, MemcachedClient.GetExpiration(validFor, null)))
+                .Success;
         }
 
         /// <summary>
@@ -497,7 +526,8 @@ namespace EasyMemoryCache.Memcached
             ulong tmp = 0;
             int status;
 
-            return this.PerformStore(mode, key, value, MemcachedClient.GetExpiration(null, expiresAt), ref tmp, out status).Success;
+            return this.PerformStore(mode, key, value, MemcachedClient.GetExpiration(null, expiresAt), ref tmp,
+                out status).Success;
         }
 
         /// <summary>
@@ -511,7 +541,8 @@ namespace EasyMemoryCache.Memcached
         public CasResult<bool> Cas(StoreMode mode, string key, object value, ulong cas)
         {
             var result = this.PerformStore(mode, key, value, 0, cas);
-            return new CasResult<bool> { Cas = result.Cas, Result = result.Success, StatusCode = result.StatusCode.Value };
+            return new CasResult<bool>
+                { Cas = result.Cas, Result = result.Success, StatusCode = result.StatusCode.Value };
         }
 
         /// <summary>
@@ -526,7 +557,8 @@ namespace EasyMemoryCache.Memcached
         public CasResult<bool> Cas(StoreMode mode, string key, object value, TimeSpan validFor, ulong cas)
         {
             var result = this.PerformStore(mode, key, value, MemcachedClient.GetExpiration(validFor, null), cas);
-            return new CasResult<bool> { Cas = result.Cas, Result = result.Success, StatusCode = result.StatusCode.Value };
+            return new CasResult<bool>
+                { Cas = result.Cas, Result = result.Success, StatusCode = result.StatusCode.Value };
         }
 
         /// <summary>
@@ -541,7 +573,8 @@ namespace EasyMemoryCache.Memcached
         public CasResult<bool> Cas(StoreMode mode, string key, object value, DateTime expiresAt, ulong cas)
         {
             var result = this.PerformStore(mode, key, value, MemcachedClient.GetExpiration(null, expiresAt), cas);
-            return new CasResult<bool> { Cas = result.Cas, Result = result.Success, StatusCode = result.StatusCode.Value };
+            return new CasResult<bool>
+                { Cas = result.Cas, Result = result.Success, StatusCode = result.StatusCode.Value };
         }
 
         /// <summary>
@@ -555,7 +588,8 @@ namespace EasyMemoryCache.Memcached
         public CasResult<bool> Cas(StoreMode mode, string key, object value)
         {
             var result = this.PerformStore(mode, key, value, 0, 0);
-            return new CasResult<bool> { Cas = result.Cas, Result = result.Success, StatusCode = result.StatusCode.Value };
+            return new CasResult<bool>
+                { Cas = result.Cas, Result = result.Success, StatusCode = result.StatusCode.Value };
         }
 
         private IStoreOperationResult PerformStore(StoreMode mode, string key, object value, uint expires, ulong cas)
@@ -570,10 +604,12 @@ namespace EasyMemoryCache.Memcached
             {
                 retval.Cas = tmp;
             }
+
             return retval;
         }
 
-        protected virtual IStoreOperationResult PerformStore(StoreMode mode, string key, object value, uint expires, ref ulong cas, out int statusCode)
+        protected virtual IStoreOperationResult PerformStore(StoreMode mode, string key, object value, uint expires,
+            ref ulong cas, out int statusCode)
         {
             var hashedKey = this.keyTransformer.Transform(key);
             var node = this.pool.Locate(hashedKey);
@@ -591,7 +627,10 @@ namespace EasyMemoryCache.Memcached
             {
                 CacheItem item;
 
-                try { item = this.transcoder.Serialize(value); }
+                try
+                {
+                    item = this.transcoder.Serialize(value);
+                }
                 catch (Exception e)
                 {
                     _logger.LogError("PerformStore", e);
@@ -622,7 +661,8 @@ namespace EasyMemoryCache.Memcached
             return result;
         }
 
-        protected virtual async Task<IStoreOperationResult> PerformStoreAsync(StoreMode mode, string key, object value, uint expires)
+        protected virtual async Task<IStoreOperationResult> PerformStoreAsync(StoreMode mode, string key, object value,
+            uint expires)
         {
             var hashedKey = this.keyTransformer.Transform(key);
             var node = this.pool.Locate(hashedKey);
@@ -640,7 +680,10 @@ namespace EasyMemoryCache.Memcached
             {
                 CacheItem item;
 
-                try { item = this.transcoder.Serialize(value); }
+                try
+                {
+                    item = this.transcoder.Serialize(value);
+                }
                 catch (Exception e)
                 {
                     _logger.LogError(new EventId(), e, $"{nameof(PerformStoreAsync)} for '{key}' key");
@@ -701,7 +744,8 @@ namespace EasyMemoryCache.Memcached
         /// <remarks>If the client uses the Text protocol, the item must be inserted into the cache before it can be changed. It must be inserted as a <see cref="T:System.String"/>. Moreover the Text protocol only works with <see cref="System.UInt32"/> values, so return value -1 always indicates that the item was not found.</remarks>
         public ulong Increment(string key, ulong defaultValue, ulong delta, TimeSpan validFor)
         {
-            return this.PerformMutate(MutationMode.Increment, key, defaultValue, delta, MemcachedClient.GetExpiration(validFor, null)).Value;
+            return this.PerformMutate(MutationMode.Increment, key, defaultValue, delta,
+                MemcachedClient.GetExpiration(validFor, null)).Value;
         }
 
         /// <summary>
@@ -715,7 +759,8 @@ namespace EasyMemoryCache.Memcached
         /// <remarks>If the client uses the Text protocol, the item must be inserted into the cache before it can be changed. It must be inserted as a <see cref="T:System.String"/>. Moreover the Text protocol only works with <see cref="System.UInt32"/> values, so return value -1 always indicates that the item was not found.</remarks>
         public ulong Increment(string key, ulong defaultValue, ulong delta, DateTime expiresAt)
         {
-            return this.PerformMutate(MutationMode.Increment, key, defaultValue, delta, MemcachedClient.GetExpiration(null, expiresAt)).Value;
+            return this.PerformMutate(MutationMode.Increment, key, defaultValue, delta,
+                MemcachedClient.GetExpiration(null, expiresAt)).Value;
         }
 
         /// <summary>
@@ -730,7 +775,8 @@ namespace EasyMemoryCache.Memcached
         public CasResult<ulong> Increment(string key, ulong defaultValue, ulong delta, ulong cas)
         {
             var result = this.CasMutate(MutationMode.Increment, key, defaultValue, delta, 0, cas);
-            return new CasResult<ulong> { Cas = result.Cas, Result = result.Value, StatusCode = result.StatusCode.Value };
+            return new CasResult<ulong>
+                { Cas = result.Cas, Result = result.Value, StatusCode = result.StatusCode.Value };
         }
 
         /// <summary>
@@ -745,8 +791,10 @@ namespace EasyMemoryCache.Memcached
         /// <remarks>If the client uses the Text protocol, the item must be inserted into the cache before it can be changed. It must be inserted as a <see cref="T:System.String"/>. Moreover the Text protocol only works with <see cref="System.UInt32"/> values, so return value -1 always indicates that the item was not found.</remarks>
         public CasResult<ulong> Increment(string key, ulong defaultValue, ulong delta, TimeSpan validFor, ulong cas)
         {
-            var result = this.CasMutate(MutationMode.Increment, key, defaultValue, delta, MemcachedClient.GetExpiration(validFor, null), cas);
-            return new CasResult<ulong> { Cas = result.Cas, Result = result.Value, StatusCode = result.StatusCode.Value };
+            var result = this.CasMutate(MutationMode.Increment, key, defaultValue, delta,
+                MemcachedClient.GetExpiration(validFor, null), cas);
+            return new CasResult<ulong>
+                { Cas = result.Cas, Result = result.Value, StatusCode = result.StatusCode.Value };
         }
 
         /// <summary>
@@ -761,8 +809,10 @@ namespace EasyMemoryCache.Memcached
         /// <remarks>If the client uses the Text protocol, the item must be inserted into the cache before it can be changed. It must be inserted as a <see cref="T:System.String"/>. Moreover the Text protocol only works with <see cref="System.UInt32"/> values, so return value -1 always indicates that the item was not found.</remarks>
         public CasResult<ulong> Increment(string key, ulong defaultValue, ulong delta, DateTime expiresAt, ulong cas)
         {
-            var result = this.CasMutate(MutationMode.Increment, key, defaultValue, delta, MemcachedClient.GetExpiration(null, expiresAt), cas);
-            return new CasResult<ulong> { Cas = result.Cas, Result = result.Value, StatusCode = result.StatusCode.Value };
+            var result = this.CasMutate(MutationMode.Increment, key, defaultValue, delta,
+                MemcachedClient.GetExpiration(null, expiresAt), cas);
+            return new CasResult<ulong>
+                { Cas = result.Cas, Result = result.Value, StatusCode = result.StatusCode.Value };
         }
 
         #endregion [ Increment                    ]
@@ -793,7 +843,8 @@ namespace EasyMemoryCache.Memcached
         /// <remarks>If the client uses the Text protocol, the item must be inserted into the cache before it can be changed. It must be inserted as a <see cref="T:System.String"/>. Moreover the Text protocol only works with <see cref="System.UInt32"/> values, so return value -1 always indicates that the item was not found.</remarks>
         public ulong Decrement(string key, ulong defaultValue, ulong delta, TimeSpan validFor)
         {
-            return this.PerformMutate(MutationMode.Decrement, key, defaultValue, delta, MemcachedClient.GetExpiration(validFor, null)).Value;
+            return this.PerformMutate(MutationMode.Decrement, key, defaultValue, delta,
+                MemcachedClient.GetExpiration(validFor, null)).Value;
         }
 
         /// <summary>
@@ -807,7 +858,8 @@ namespace EasyMemoryCache.Memcached
         /// <remarks>If the client uses the Text protocol, the item must be inserted into the cache before it can be changed. It must be inserted as a <see cref="T:System.String"/>. Moreover the Text protocol only works with <see cref="System.UInt32"/> values, so return value -1 always indicates that the item was not found.</remarks>
         public ulong Decrement(string key, ulong defaultValue, ulong delta, DateTime expiresAt)
         {
-            return this.PerformMutate(MutationMode.Decrement, key, defaultValue, delta, MemcachedClient.GetExpiration(null, expiresAt)).Value;
+            return this.PerformMutate(MutationMode.Decrement, key, defaultValue, delta,
+                MemcachedClient.GetExpiration(null, expiresAt)).Value;
         }
 
         /// <summary>
@@ -822,7 +874,8 @@ namespace EasyMemoryCache.Memcached
         public CasResult<ulong> Decrement(string key, ulong defaultValue, ulong delta, ulong cas)
         {
             var result = this.CasMutate(MutationMode.Decrement, key, defaultValue, delta, 0, cas);
-            return new CasResult<ulong> { Cas = result.Cas, Result = result.Value, StatusCode = result.StatusCode.Value };
+            return new CasResult<ulong>
+                { Cas = result.Cas, Result = result.Value, StatusCode = result.StatusCode.Value };
         }
 
         /// <summary>
@@ -837,8 +890,10 @@ namespace EasyMemoryCache.Memcached
         /// <remarks>If the client uses the Text protocol, the item must be inserted into the cache before it can be changed. It must be inserted as a <see cref="T:System.String"/>. Moreover the Text protocol only works with <see cref="System.UInt32"/> values, so return value -1 always indicates that the item was not found.</remarks>
         public CasResult<ulong> Decrement(string key, ulong defaultValue, ulong delta, TimeSpan validFor, ulong cas)
         {
-            var result = this.CasMutate(MutationMode.Decrement, key, defaultValue, delta, MemcachedClient.GetExpiration(validFor, null), cas);
-            return new CasResult<ulong> { Cas = result.Cas, Result = result.Value, StatusCode = result.StatusCode.Value };
+            var result = this.CasMutate(MutationMode.Decrement, key, defaultValue, delta,
+                MemcachedClient.GetExpiration(validFor, null), cas);
+            return new CasResult<ulong>
+                { Cas = result.Cas, Result = result.Value, StatusCode = result.StatusCode.Value };
         }
 
         /// <summary>
@@ -853,8 +908,10 @@ namespace EasyMemoryCache.Memcached
         /// <remarks>If the client uses the Text protocol, the item must be inserted into the cache before it can be changed. It must be inserted as a <see cref="T:System.String"/>. Moreover the Text protocol only works with <see cref="System.UInt32"/> values, so return value -1 always indicates that the item was not found.</remarks>
         public CasResult<ulong> Decrement(string key, ulong defaultValue, ulong delta, DateTime expiresAt, ulong cas)
         {
-            var result = this.CasMutate(MutationMode.Decrement, key, defaultValue, delta, MemcachedClient.GetExpiration(null, expiresAt), cas);
-            return new CasResult<ulong> { Cas = result.Cas, Result = result.Value, StatusCode = result.StatusCode.Value };
+            var result = this.CasMutate(MutationMode.Decrement, key, defaultValue, delta,
+                MemcachedClient.GetExpiration(null, expiresAt), cas);
+            return new CasResult<ulong>
+                { Cas = result.Cas, Result = result.Value, StatusCode = result.StatusCode.Value };
         }
 
         #endregion [ Decrement                    ]
@@ -873,14 +930,16 @@ namespace EasyMemoryCache.Memcached
 
         #endregion Touch
 
-        private IMutateOperationResult PerformMutate(MutationMode mode, string key, ulong defaultValue, ulong delta, uint expires)
+        private IMutateOperationResult PerformMutate(MutationMode mode, string key, ulong defaultValue, ulong delta,
+            uint expires)
         {
             ulong tmp = 0;
 
             return PerformMutate(mode, key, defaultValue, delta, expires, ref tmp);
         }
 
-        private IMutateOperationResult CasMutate(MutationMode mode, string key, ulong defaultValue, ulong delta, uint expires, ulong cas)
+        private IMutateOperationResult CasMutate(MutationMode mode, string key, ulong defaultValue, ulong delta,
+            uint expires, ulong cas)
         {
             var tmp = cas;
             var retval = PerformMutate(mode, key, defaultValue, delta, expires, ref tmp);
@@ -888,7 +947,8 @@ namespace EasyMemoryCache.Memcached
             return retval;
         }
 
-        protected virtual IMutateOperationResult PerformMutate(MutationMode mode, string key, ulong defaultValue, ulong delta, uint expires, ref ulong cas)
+        protected virtual IMutateOperationResult PerformMutate(MutationMode mode, string key, ulong defaultValue,
+            ulong delta, uint expires, ref ulong cas)
         {
             var hashedKey = this.keyTransformer.Transform(key);
             var node = this.pool.Locate(hashedKey);
@@ -920,7 +980,8 @@ namespace EasyMemoryCache.Memcached
             return result;
         }
 
-        protected virtual async Task<IMutateOperationResult> PerformMutateAsync(MutationMode mode, string key, ulong defaultValue, ulong delta, uint expires)
+        protected virtual async Task<IMutateOperationResult> PerformMutateAsync(MutationMode mode, string key,
+            ulong defaultValue, ulong delta, uint expires)
         {
             ulong cas = 0;
             var hashedKey = this.keyTransformer.Transform(key);
@@ -1011,7 +1072,8 @@ namespace EasyMemoryCache.Memcached
             return new CasResult<bool> { Cas = tmp, Result = success.Success };
         }
 
-        protected virtual IConcatOperationResult PerformConcatenate(ConcatenationMode mode, string key, ref ulong cas, ArraySegment<byte> data)
+        protected virtual IConcatOperationResult PerformConcatenate(ConcatenationMode mode, string key, ref ulong cas,
+            ArraySegment<byte> data)
         {
             var hashedKey = this.keyTransformer.Transform(key);
             var node = this.pool.Locate(hashedKey);
@@ -1178,12 +1240,16 @@ namespace EasyMemoryCache.Memcached
             });
         }
 
-        protected virtual IDictionary<string, T> PerformMultiGet<T>(IEnumerable<string> keys, Func<IMultiGetOperation, KeyValuePair<string, CacheItem>, T> collector)
+        protected virtual IDictionary<string, T> PerformMultiGet<T>(IEnumerable<string> keys,
+            Func<IMultiGetOperation, KeyValuePair<string, CacheItem>, T> collector)
         {
             // transform the keys and index them by hashed => original
             // the mget results will be mapped using this index
             var hashed = new Dictionary<string, string>();
-            foreach (var key in keys) hashed[this.keyTransformer.Transform(key)] = key;
+            foreach (var key in keys)
+            {
+                hashed[this.keyTransformer.Transform(key)] = key;
+            }
 
             var byServer = GroupByServer(hashed.Keys);
 
@@ -1238,7 +1304,8 @@ namespace EasyMemoryCache.Memcached
             return retval;
         }
 
-        protected virtual async Task<IDictionary<string, T>> PerformMultiGetAsync<T>(IEnumerable<string> keys, Func<IMultiGetOperation, KeyValuePair<string, CacheItem>, T> collector)
+        protected virtual async Task<IDictionary<string, T>> PerformMultiGetAsync<T>(IEnumerable<string> keys,
+            Func<IMultiGetOperation, KeyValuePair<string, CacheItem>, T> collector)
         {
             // transform the keys and index them by hashed => original
             // the mget results will be mapped using this index
@@ -1287,11 +1354,16 @@ namespace EasyMemoryCache.Memcached
             foreach (var k in keys)
             {
                 var node = this.pool.Locate(k);
-                if (node == null) continue;
+                if (node == null)
+                {
+                    continue;
+                }
 
                 IList<string> list;
                 if (!retval.TryGetValue(node, out list))
+                {
                     retval[node] = list = new List<string>(4);
+                }
 
                 list.Add(k);
             }
@@ -1312,12 +1384,16 @@ namespace EasyMemoryCache.Memcached
                 //    WaitHandle.WaitAll(waitHandles);
                 //else
                 for (var i = 0; i < waitHandles.Length; i++)
+                {
                     waitHandles[i].WaitOne();
+                }
             }
             finally
             {
                 for (var i = 0; i < waitHandles.Length; i++)
+                {
                     waitHandles[i].Dispose();
+                }
             }
         }
 
@@ -1333,7 +1409,9 @@ namespace EasyMemoryCache.Memcached
             TimeSpan? relativeToNow = null)
         {
             if (validFor != null && expiresAt != null)
+            {
                 throw new ArgumentException("You cannot specify both validFor and expiresAt.");
+            }
 
             if (validFor == null && expiresAt == null && absoluteExpiration == null && relativeToNow == null)
             {
@@ -1387,8 +1465,13 @@ namespace EasyMemoryCache.Memcached
 
         ~MemcachedClient()
         {
-            try { ((IDisposable)this).Dispose(); }
-            catch { }
+            try
+            {
+                ((IDisposable)this).Dispose();
+            }
+            catch
+            {
+            }
         }
 
         void IDisposable.Dispose()
@@ -1406,8 +1489,14 @@ namespace EasyMemoryCache.Memcached
 
             if (this.pool != null)
             {
-                try { this.pool.Dispose(); }
-                finally { this.pool = null; }
+                try
+                {
+                    this.pool.Dispose();
+                }
+                finally
+                {
+                    this.pool = null;
+                }
             }
         }
 
@@ -1432,7 +1521,8 @@ namespace EasyMemoryCache.Memcached
             _logger.LogInformation($"{nameof(IDistributedCache.Set)}(\"{key}\")");
 
             ulong cas = 0;
-            var expires = MemcachedClient.GetExpiration(options.SlidingExpiration, null, options.AbsoluteExpiration, options.AbsoluteExpirationRelativeToNow);
+            var expires = MemcachedClient.GetExpiration(options.SlidingExpiration, null, options.AbsoluteExpiration,
+                options.AbsoluteExpirationRelativeToNow);
             PerformStore(StoreMode.Set, key, value, expires, cas);
             if (expires > 0)
             {
@@ -1440,11 +1530,13 @@ namespace EasyMemoryCache.Memcached
             }
         }
 
-        async Task IDistributedCache.SetAsync(string key, byte[] value, DistributedCacheEntryOptions options, CancellationToken token = default(CancellationToken))
+        async Task IDistributedCache.SetAsync(string key, byte[] value, DistributedCacheEntryOptions options,
+            CancellationToken token = default(CancellationToken))
         {
             _logger.LogInformation($"{nameof(IDistributedCache.SetAsync)}(\"{key}\")");
 
-            var expires = MemcachedClient.GetExpiration(options.SlidingExpiration, null, options.AbsoluteExpiration, options.AbsoluteExpirationRelativeToNow);
+            var expires = MemcachedClient.GetExpiration(options.SlidingExpiration, null, options.AbsoluteExpiration,
+                options.AbsoluteExpirationRelativeToNow);
             await PerformStoreAsync(StoreMode.Set, key, value, expires);
             if (expires > 0)
             {

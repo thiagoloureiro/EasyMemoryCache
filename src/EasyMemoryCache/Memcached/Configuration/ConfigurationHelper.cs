@@ -56,7 +56,9 @@ namespace EasyMemoryCache.Memcached.Configuration
                 dict.Remove(name);
 
                 if (!String.IsNullOrEmpty(value))
+                {
                     return true;
+                }
             }
 
             if (required)

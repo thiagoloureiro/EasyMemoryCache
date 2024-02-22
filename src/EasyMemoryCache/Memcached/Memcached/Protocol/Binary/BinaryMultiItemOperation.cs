@@ -17,7 +17,9 @@ namespace EasyMemoryCache.Memcached.Memcached.Protocol.Binary
             var retval = new List<ArraySegment<byte>>(keys.Count * 2);
 
             foreach (var k in keys)
+            {
                 this.Build(k).CreateBuffer(retval);
+            }
 
             return retval;
         }

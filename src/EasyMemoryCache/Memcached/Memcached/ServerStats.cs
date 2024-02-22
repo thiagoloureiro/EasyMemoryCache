@@ -75,19 +75,25 @@ namespace EasyMemoryCache.Memcached.Memcached
                 // error check
                 string tmp = GetRaw(server, item);
                 if (String.IsNullOrEmpty(tmp))
+                {
                     throw new ArgumentException("Item was not found: " + item);
+                }
 
                 long value;
                 // return the value
                 if (Int64.TryParse(tmp, out value))
+                {
                     return value;
+                }
 
                 throw new ArgumentException("Invalid value string was returned: " + tmp);
             }
 
             // check if we can sum the value for all servers
             if ((Optable[(int)item] & OpAllowsSum) != OpAllowsSum)
+            {
                 throw new ArgumentException("The " + item + " values cannot be summarized");
+            }
 
             long retval = 0;
 
@@ -109,7 +115,9 @@ namespace EasyMemoryCache.Memcached.Memcached
         {
             string version = GetRaw(server, StatItem.Version);
             if (String.IsNullOrEmpty(version))
+            {
                 throw new ArgumentException("No version found for the server " + server);
+            }
 
             return new Version(version);
         }
@@ -123,11 +131,15 @@ namespace EasyMemoryCache.Memcached.Memcached
         {
             string uptime = GetRaw(server, StatItem.Uptime);
             if (String.IsNullOrEmpty(uptime))
+            {
                 throw new ArgumentException("No uptime found for the server " + server);
+            }
 
             long value;
             if (!Int64.TryParse(uptime, out value))
+            {
                 throw new ArgumentException("Invalid uptime string was returned: " + uptime);
+            }
 
             return TimeSpan.FromSeconds(value);
         }
@@ -146,15 +158,21 @@ namespace EasyMemoryCache.Memcached.Memcached
             if (this.results.TryGetValue(server, out serverValues))
             {
                 if (serverValues.TryGetValue(key, out retval))
+                {
                     return retval;
+                }
 
                 if (log.IsDebugEnabled)
+                {
                     log.DebugFormat("The stat item {0} does not exist for {1}", key, server);
+                }
             }
             else
             {
                 if (log.IsDebugEnabled)
+                {
                     log.DebugFormat("No stats are stored for {0}", server);
+                }
             }
 
             return null;
@@ -169,7 +187,9 @@ namespace EasyMemoryCache.Memcached.Memcached
         public string GetRaw(IPEndPoint server, StatItem item)
         {
             if ((int)item < StatKeys.Length && (int)item >= 0)
+            {
                 return GetRaw(server, StatKeys[(int)item]);
+            }
 
             throw new ArgumentOutOfRangeException("item");
         }
@@ -178,7 +198,8 @@ namespace EasyMemoryCache.Memcached.Memcached
         {
             string tmp;
 
-            return this.results.Select(kvp => new KeyValuePair<EndPoint, string>(kvp.Key, kvp.Value.TryGetValue(key, out tmp) ? tmp : null)).ToList();
+            return this.results.Select(kvp =>
+                new KeyValuePair<EndPoint, string>(kvp.Key, kvp.Value.TryGetValue(key, out tmp) ? tmp : null)).ToList();
         }
     }
 }

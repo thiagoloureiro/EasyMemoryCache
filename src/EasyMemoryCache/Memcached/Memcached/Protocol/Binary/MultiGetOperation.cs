@@ -42,7 +42,9 @@ namespace EasyMemoryCache.Memcached.Memcached.Protocol.Binary
             }
 
             if (log.IsDebugEnabled)
+            {
                 log.DebugFormat("Building multi-get for {0} keys", keys.Count);
+            }
 
             // map the command's correlationId to the item key,
             // so we can use GetQ (which only returns the item data)
@@ -90,11 +92,15 @@ namespace EasyMemoryCache.Memcached.Memcached.Protocol.Binary
             if (!this.idToKey.TryGetValue(reader.CorrelationId, out key))
             {
                 // we're not supposed to get here tho
-                log.WarnFormat("Found response with CorrelationId {0}, but no key is matching it.", reader.CorrelationId);
+                log.WarnFormat("Found response with CorrelationId {0}, but no key is matching it.",
+                    reader.CorrelationId);
             }
             else
             {
-                if (log.IsDebugEnabled) log.DebugFormat("Reading item {0}", key);
+                if (log.IsDebugEnabled)
+                {
+                    log.DebugFormat("Reading item {0}", key);
+                }
 
                 // deserialize the response
                 var flags = (ushort)BinaryConverter.DecodeInt32(reader.Extra, 0);
@@ -126,11 +132,15 @@ namespace EasyMemoryCache.Memcached.Memcached.Protocol.Binary
                 if (!this.idToKey.TryGetValue(response.CorrelationId, out key))
                 {
                     // we're not supposed to get here tho
-                    log.WarnFormat("Found response with CorrelationId {0}, but no key is matching it.", response.CorrelationId);
+                    log.WarnFormat("Found response with CorrelationId {0}, but no key is matching it.",
+                        response.CorrelationId);
                     continue;
                 }
 
-                if (log.IsDebugEnabled) log.DebugFormat("Reading item {0}", key);
+                if (log.IsDebugEnabled)
+                {
+                    log.DebugFormat("Reading item {0}", key);
+                }
 
                 // deserialize the response
                 int flags = BinaryConverter.DecodeInt32(response.Extra, 0);
@@ -157,7 +167,9 @@ namespace EasyMemoryCache.Memcached.Memcached.Protocol.Binary
 
                 // found the noop, quit
                 if (response.CorrelationId == this.noopId)
+                {
                     return result.Pass();
+                }
 
                 string key;
 
@@ -165,11 +177,15 @@ namespace EasyMemoryCache.Memcached.Memcached.Protocol.Binary
                 if (!this.idToKey.TryGetValue(response.CorrelationId, out key))
                 {
                     // we're not supposed to get here tho
-                    log.WarnFormat("Found response with CorrelationId {0}, but no key is matching it.", response.CorrelationId);
+                    log.WarnFormat("Found response with CorrelationId {0}, but no key is matching it.",
+                        response.CorrelationId);
                     continue;
                 }
 
-                if (log.IsDebugEnabled) log.DebugFormat("Reading item {0}", key);
+                if (log.IsDebugEnabled)
+                {
+                    log.DebugFormat("Reading item {0}", key);
+                }
 
                 // deserialize the response
                 int flags = BinaryConverter.DecodeInt32(response.Extra, 0);

@@ -7,7 +7,7 @@ namespace EasyMemoryCache.Memcached.Memcached.Protocol.Binary
     /// </summary>
     public class SaslContinue : SaslStep
     {
-        private byte[] continuation;
+        private readonly byte[] continuation;
 
         public SaslContinue(ISaslAuthenticationProvider provider, byte[] continuation)
             : base(provider)

@@ -248,7 +248,10 @@ namespace EasyMemoryCache.Memcached.Memcached
         /// </summary>
         public void Dispose()
         {
-            if (this.isDisposed) return;
+            if (this.isDisposed)
+            {
+                return;
+            }
 
             GC.SuppressFinalize(this);
 
@@ -258,7 +261,10 @@ namespace EasyMemoryCache.Memcached.Memcached
             // this should not kill any kittens
             lock (SyncRoot)
             {
-                if (this.isDisposed) return;
+                if (this.isDisposed)
+                {
+                    return;
+                }
 
                 this.isDisposed = true;
                 this.internalPoolImpl.Dispose();
@@ -1061,7 +1067,10 @@ namespace EasyMemoryCache.Memcached.Memcached
         protected virtual async Task<bool> ExecuteOperationAsync(IOperation op, Action<bool> next)
         {
             var socket = (await this.AcquireAsync()).Value;
-            if (socket == null) return false;
+            if (socket == null)
+            {
+                return false;
+            }
 
             //key(string) to buffer(btye[])
             var b = op.GetBuffer();
