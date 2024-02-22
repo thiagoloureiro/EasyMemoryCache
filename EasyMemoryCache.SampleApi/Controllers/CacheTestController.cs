@@ -6,12 +6,10 @@ namespace EasyMemoryCache.SampleApi.Controllers
     [Route("[controller]")]
     public class CacheTestController : ControllerBase
     {
-        private readonly ILogger<CacheTestController> _logger;
         private readonly ICaching _caching;
 
-        public CacheTestController(ILogger<CacheTestController> logger, ICaching caching)
+        public CacheTestController(ICaching caching)
         {
-            _logger = logger;
             _caching = caching;
         }
 
