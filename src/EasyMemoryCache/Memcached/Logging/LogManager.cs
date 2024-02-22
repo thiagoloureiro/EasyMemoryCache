@@ -27,7 +27,7 @@ namespace EasyMemoryCache.Memcached.Logging
     /// </example>
     public static class LogManager
     {
-        private static ILogFactory factory;
+        private static ILogFactory _factory;
 
         //TODO: Swith to Microsoft.Extensions.Logging
         static LogManager()
@@ -35,7 +35,7 @@ namespace EasyMemoryCache.Memcached.Logging
 #if DEBUG
             factory = new ConsoleLogFactory();
 #else
-            factory = new NullLoggerFactory();
+            _factory = new NullLoggerFactory();
 #endif
         }
 
@@ -46,7 +46,9 @@ namespace EasyMemoryCache.Memcached.Logging
         public static void AssignFactory(ILogFactory factory)
         {
             if (factory == null) throw new ArgumentNullException("factory");
-            LogManager.factory = factory;
+            {
+                LogManager._factory = factory;
+            }
         }
 
         /// <summary>
@@ -56,7 +58,7 @@ namespace EasyMemoryCache.Memcached.Logging
         /// <returns></returns>
         public static ILog GetLogger(Type type)
         {
-            return factory.GetLogger(type);
+            return _factory.GetLogger(type);
         }
 
         /// <summary>
@@ -66,7 +68,7 @@ namespace EasyMemoryCache.Memcached.Logging
         /// <returns></returns>
         public static ILog GetLogger(string name)
         {
-            return factory.GetLogger(name);
+            return _factory.GetLogger(name);
         }
     }
 }

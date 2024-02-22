@@ -33,7 +33,7 @@ namespace EasyMemoryCache.Memcached.Memcached
         private bool isInitialized = false;
         private readonly AsyncNonKeyedLocker poolInitLocker = new(1);
         private readonly TimeSpan _initPoolTimeout;
-        private bool _useSslStream;
+        private readonly bool _useSslStream;
 
         public MemcachedNode(
             EndPoint endpoint,
@@ -47,7 +47,9 @@ namespace EasyMemoryCache.Memcached.Memcached
             _config = socketPoolConfig;
 
             if (socketPoolConfig.ConnectionTimeout.TotalMilliseconds >= Int32.MaxValue)
+            {
                 throw new InvalidOperationException("ConnectionTimeout must be < Int32.MaxValue");
+            }
 
             if (socketPoolConfig.InitPoolTimeout.TotalSeconds < 1)
             {
@@ -111,7 +113,10 @@ namespace EasyMemoryCache.Memcached.Memcached
                 // we could connect to the server, let's recreate the socket pool
                 lock (SyncRoot)
                 {
-                    if (this.isDisposed) return false;
+                    if (this.isDisposed)
+                    {
+                        return false;
+                    }
 
                     // try to connect to the server
                     using (var socket = this.CreateSocket())
@@ -119,7 +124,9 @@ namespace EasyMemoryCache.Memcached.Memcached
                     }
 
                     if (this.internalPoolImpl.IsAlive)
+                    {
                         return true;
+                    }
 
                     // it's easier to create a new pool than reinitializing a dead one
                     // rewrite-then-dispose to avoid a race condition with Acquire (which does no locking)
@@ -128,14 +135,22 @@ namespace EasyMemoryCache.Memcached.Memcached
 
                     Interlocked.Exchange(ref this.internalPoolImpl, newPool);
 
-                    try { oldPool.Dispose(); }
-                    catch { }
+                    try
+                    {
+                        oldPool.Dispose();
+                    }
+                    catch
+                    {
+                    }
                 }
 
                 return true;
             }
             //could not reconnect
-            catch { return false; }
+            catch
+            {
+                return false;
+            }
         }
 
         /// <summary>
@@ -159,7 +174,8 @@ namespace EasyMemoryCache.Memcached.Memcached
                         var startTime = DateTime.Now;
                         this.internalPoolImpl.InitPool();
                         this.isInitialized = true;
-                        _logger.LogInformation("MemcachedInitPool-cost: {0}ms", (DateTime.Now - startTime).TotalMilliseconds);
+                        _logger.LogInformation("MemcachedInitPool-cost: {0}ms",
+                            (DateTime.Now - startTime).TotalMilliseconds);
                     }
                 }
             }
@@ -198,7 +214,8 @@ namespace EasyMemoryCache.Memcached.Memcached
                     var startTime = DateTime.Now;
                     await this.internalPoolImpl.InitPoolAsync();
                     this.isInitialized = true;
-                    _logger.LogInformation("MemcachedInitPool-cost: {0}ms", (DateTime.Now - startTime).TotalMilliseconds);
+                    _logger.LogInformation("MemcachedInitPool-cost: {0}ms",
+                        (DateTime.Now - startTime).TotalMilliseconds);
                 }
             }
 
@@ -217,8 +234,13 @@ namespace EasyMemoryCache.Memcached.Memcached
 
         ~MemcachedNode()
         {
-            try { ((IDisposable)this).Dispose(); }
-            catch { }
+            try
+            {
+                ((IDisposable)this).Dispose();
+            }
+            catch
+            {
+            }
         }
 
         /// <summary>
@@ -282,13 +304,24 @@ namespace EasyMemoryCache.Memcached.Memcached
                 ILogger logger)
             {
                 if (config.MinPoolSize < 0)
+                {
                     throw new InvalidOperationException("minItems must be larger >= 0", null);
+                }
+
                 if (config.MaxPoolSize < config.MinPoolSize)
+                {
                     throw new InvalidOperationException("maxItems must be larger than minItems", null);
+                }
+
                 if (config.QueueTimeout < TimeSpan.Zero)
+                {
                     throw new InvalidOperationException("queueTimeout must be >= TimeSpan.Zero", null);
+                }
+
                 if (config.ReceiveTimeout < TimeSpan.Zero)
+                {
                     throw new InvalidOperationException("ReceiveTimeout must be >= TimeSpan.Zero", null);
+                }
 
                 this.ownerNode = ownerNode;
                 this.isAlive = true;
@@ -364,7 +397,9 @@ namespace EasyMemoryCache.Memcached.Memcached
                     }
 
                     if (_logger.IsEnabled(LogLevel.Debug))
+                    {
                         _logger.LogDebug("Pool has been inited for {0} with {1} sockets", _endPoint, this.minItems);
+                    }
                 }
                 catch (Exception e)
                 {
@@ -409,14 +444,20 @@ namespace EasyMemoryCache.Memcached.Memcached
                 var result = new PooledSocketResult();
                 var message = string.Empty;
 
-                if (_isDebugEnabled) _logger.LogDebug($"Acquiring stream from pool on node '{_endPoint}'");
+                if (_isDebugEnabled)
+                {
+                    _logger.LogDebug($"Acquiring stream from pool on node '{_endPoint}'");
+                }
 
                 if (!this.isAlive || this.isDisposed)
                 {
                     message = "Pool is dead or disposed, returning null. " + _endPoint;
                     result.Fail(message);
 
-                    if (_isDebugEnabled) _logger.LogDebug(message);
+                    if (_isDebugEnabled)
+                    {
+                        _logger.LogDebug(message);
+                    }
 
                     return result;
                 }
@@ -426,7 +467,11 @@ namespace EasyMemoryCache.Memcached.Memcached
                 if (!_semaphore.Wait(this.queueTimeout))
                 {
                     message = "Pool is full, timeouting. " + _endPoint;
-                    if (_isDebugEnabled) _logger.LogDebug(message);
+                    if (_isDebugEnabled)
+                    {
+                        _logger.LogDebug(message);
+                    }
+
                     result.Fail(message, new TimeoutException());
 
                     // everyone is so busy
@@ -439,7 +484,11 @@ namespace EasyMemoryCache.Memcached.Memcached
                     _semaphore.Release();
 
                     message = "Pool is dead, returning null. " + _endPoint;
-                    if (_isDebugEnabled) _logger.LogDebug(message);
+                    if (_isDebugEnabled)
+                    {
+                        _logger.LogDebug(message);
+                    }
+
                     result.Fail(message);
 
                     return result;
@@ -455,7 +504,10 @@ namespace EasyMemoryCache.Memcached.Memcached
                         retval.Reset();
 
                         message = "Socket was reset. " + retval.InstanceId;
-                        if (_isDebugEnabled) _logger.LogDebug(message);
+                        if (_isDebugEnabled)
+                        {
+                            _logger.LogDebug(message);
+                        }
 
                         result.Pass(message);
                         result.Value = retval;
@@ -478,14 +530,18 @@ namespace EasyMemoryCache.Memcached.Memcached
 
                 // free item pool is empty
                 message = "Could not get a socket from the pool, Creating a new item. " + _endPoint;
-                if (_isDebugEnabled) _logger.LogDebug(message);
+                if (_isDebugEnabled)
+                {
+                    _logger.LogDebug(message);
+                }
 
                 try
                 {
                     // okay, create the new item
                     var startTime = DateTime.Now;
                     retval = this.CreateSocket();
-                    _logger.LogInformation("MemcachedAcquire-CreateSocket: {0}ms", (DateTime.Now - startTime).TotalMilliseconds);
+                    _logger.LogInformation("MemcachedAcquire-CreateSocket: {0}ms",
+                        (DateTime.Now - startTime).TotalMilliseconds);
                     result.Value = retval;
                     result.Pass();
                 }
@@ -505,7 +561,10 @@ namespace EasyMemoryCache.Memcached.Memcached
                     return result;
                 }
 
-                if (_isDebugEnabled) _logger.LogDebug("Done.");
+                if (_isDebugEnabled)
+                {
+                    _logger.LogDebug("Done.");
+                }
 
                 return result;
             }
@@ -519,14 +578,20 @@ namespace EasyMemoryCache.Memcached.Memcached
                 var result = new PooledSocketResult();
                 var message = string.Empty;
 
-                if (_isDebugEnabled) _logger.LogDebug("Acquiring stream from pool. " + _endPoint);
+                if (_isDebugEnabled)
+                {
+                    _logger.LogDebug("Acquiring stream from pool. " + _endPoint);
+                }
 
                 if (!this.isAlive || this.isDisposed)
                 {
                     message = "Pool is dead or disposed, returning null. " + _endPoint;
                     result.Fail(message);
 
-                    if (_isDebugEnabled) _logger.LogDebug(message);
+                    if (_isDebugEnabled)
+                    {
+                        _logger.LogDebug(message);
+                    }
 
                     return result;
                 }
@@ -536,7 +601,11 @@ namespace EasyMemoryCache.Memcached.Memcached
                 if (!await _semaphore.WaitAsync(this.queueTimeout))
                 {
                     message = "Pool is full, timeouting. " + _endPoint;
-                    if (_isDebugEnabled) _logger.LogDebug(message);
+                    if (_isDebugEnabled)
+                    {
+                        _logger.LogDebug(message);
+                    }
+
                     result.Fail(message, new TimeoutException());
 
                     // everyone is so busy
@@ -549,7 +618,11 @@ namespace EasyMemoryCache.Memcached.Memcached
                     _semaphore.Release();
 
                     message = "Pool is dead, returning null. " + _endPoint;
-                    if (_isDebugEnabled) _logger.LogDebug(message);
+                    if (_isDebugEnabled)
+                    {
+                        _logger.LogDebug(message);
+                    }
+
                     result.Fail(message);
                     return result;
                 }
@@ -579,7 +652,10 @@ namespace EasyMemoryCache.Memcached.Memcached
                         }
 
                         message = "Socket was reset. InstanceId " + retval.InstanceId;
-                        if (_isDebugEnabled) _logger.LogDebug(message);
+                        if (_isDebugEnabled)
+                        {
+                            _logger.LogDebug(message);
+                        }
 
                         result.Pass(message);
                         result.Value = retval;
@@ -601,14 +677,18 @@ namespace EasyMemoryCache.Memcached.Memcached
 
                 // free item pool is empty
                 message = "Could not get a socket from the pool, Creating a new item. " + _endPoint;
-                if (_isDebugEnabled) _logger.LogDebug(message);
+                if (_isDebugEnabled)
+                {
+                    _logger.LogDebug(message);
+                }
 
                 try
                 {
                     // okay, create the new item
                     var startTime = DateTime.Now;
                     retval = await this.CreateSocketAsync();
-                    _logger.LogInformation("MemcachedAcquire-CreateSocket: {0}ms", (DateTime.Now - startTime).TotalMilliseconds);
+                    _logger.LogInformation("MemcachedAcquire-CreateSocket: {0}ms",
+                        (DateTime.Now - startTime).TotalMilliseconds);
                     result.Value = retval;
                     result.Pass();
                 }
@@ -628,22 +708,34 @@ namespace EasyMemoryCache.Memcached.Memcached
                     return result;
                 }
 
-                if (_isDebugEnabled) _logger.LogDebug("Done.");
+                if (_isDebugEnabled)
+                {
+                    _logger.LogDebug("Done.");
+                }
 
                 return result;
             }
 
             private void MarkAsDead()
             {
-                if (_isDebugEnabled) _logger.LogDebug("Mark as dead was requested for {0}", _endPoint);
+                if (_isDebugEnabled)
+                {
+                    _logger.LogDebug("Mark as dead was requested for {0}", _endPoint);
+                }
 
                 var shouldFail = ownerNode.FailurePolicy.ShouldFail();
 
-                if (_isDebugEnabled) _logger.LogDebug("FailurePolicy.ShouldFail(): " + shouldFail);
+                if (_isDebugEnabled)
+                {
+                    _logger.LogDebug("FailurePolicy.ShouldFail(): " + shouldFail);
+                }
 
                 if (shouldFail)
                 {
-                    if (_logger.IsEnabled(LogLevel.Warning)) _logger.LogWarning("Marking node {0} as dead", _endPoint);
+                    if (_logger.IsEnabled(LogLevel.Warning))
+                    {
+                        _logger.LogWarning("Marking node {0} as dead", _endPoint);
+                    }
 
                     this.isAlive = false;
                     this.markedAsDeadUtc = DateTime.UtcNow;
@@ -651,7 +743,9 @@ namespace EasyMemoryCache.Memcached.Memcached
                     var f = this.ownerNode.Failed;
 
                     if (f != null)
+                    {
                         f(this.ownerNode);
+                    }
                 }
             }
 
@@ -727,8 +821,13 @@ namespace EasyMemoryCache.Memcached.Memcached
 
             ~InternalPoolImpl()
             {
-                try { ((IDisposable)this).Dispose(); }
-                catch { }
+                try
+                {
+                    ((IDisposable)this).Dispose();
+                }
+                catch
+                {
+                }
             }
 
             /// <summary>
@@ -749,8 +848,13 @@ namespace EasyMemoryCache.Memcached.Memcached
 
                     while (_freeItems.TryPop(out ps))
                     {
-                        try { ps.Destroy(); }
-                        catch { }
+                        try
+                        {
+                            ps.Destroy();
+                        }
+                        catch
+                        {
+                        }
                     }
 
                     this.ownerNode = null;
@@ -791,7 +895,8 @@ namespace EasyMemoryCache.Memcached.Memcached
         {
             try
             {
-                var ps = new PooledSocket(_endPoint, _config.ConnectionTimeout, _config.ReceiveTimeout, _logger, _useSslStream);
+                var ps = new PooledSocket(_endPoint, _config.ConnectionTimeout, _config.ReceiveTimeout, _logger,
+                    _useSslStream);
                 ps.Connect();
                 return ps;
             }
@@ -806,7 +911,8 @@ namespace EasyMemoryCache.Memcached.Memcached
         {
             try
             {
-                var ps = new PooledSocket(_endPoint, _config.ConnectionTimeout, _config.ReceiveTimeout, _logger, _useSslStream);
+                var ps = new PooledSocket(_endPoint, _config.ConnectionTimeout, _config.ReceiveTimeout, _logger,
+                    _useSslStream);
                 await ps.ConnectAsync();
                 return ps;
             }
@@ -850,6 +956,7 @@ namespace EasyMemoryCache.Memcached.Memcached
                     {
                         readResult.Combine(result);
                     }
+
                     return result;
                 }
                 catch (IOException e)
@@ -866,7 +973,9 @@ namespace EasyMemoryCache.Memcached.Memcached
             }
             else
             {
-                var errorMsg = string.IsNullOrEmpty(result.Message) ? "Failed to acquire a socket from pool" : result.Message;
+                var errorMsg = string.IsNullOrEmpty(result.Message)
+                    ? "Failed to acquire a socket from pool"
+                    : result.Message;
                 _logger.LogError(errorMsg);
                 return result;
             }
@@ -894,6 +1003,7 @@ namespace EasyMemoryCache.Memcached.Memcached
                         result.Fail("Timeout to pooledSocket.WriteAsync");
                         return result;
                     }
+
                     await writeSocketTask;
 
                     //if Get, call BinaryResponse
@@ -916,6 +1026,7 @@ namespace EasyMemoryCache.Memcached.Memcached
                         _logger.LogInformation($"{op}.{nameof(op.ReadResponseAsync)} result: {readResult.Message}");
                         readResult.Combine(result);
                     }
+
                     return result;
                 }
                 catch (IOException e)
@@ -939,7 +1050,9 @@ namespace EasyMemoryCache.Memcached.Memcached
             }
             else
             {
-                var errorMsg = string.IsNullOrEmpty(result.Message) ? "Failed to acquire a socket from pool" : result.Message;
+                var errorMsg = string.IsNullOrEmpty(result.Message)
+                    ? "Failed to acquire a socket from pool"
+                    : result.Message;
                 _logger.LogError(errorMsg);
                 return result;
             }

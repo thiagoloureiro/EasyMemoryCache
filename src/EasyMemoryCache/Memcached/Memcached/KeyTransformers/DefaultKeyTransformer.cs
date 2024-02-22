@@ -4,7 +4,8 @@ namespace EasyMemoryCache.Memcached.Memcached.KeyTransformers
 {
     public class DefaultKeyTransformer : KeyTransformerBase
     {
-        private static readonly char[] ForbiddenChars = {
+        private static readonly char[] ForbiddenChars =
+        {
             '\u0000', '\u0001', '\u0002', '\u0003',
             '\u0004', '\u0005', '\u0006', '\u0007',
             '\u0008', '\u0009', '\u000a', '\u000b',
@@ -19,7 +20,9 @@ namespace EasyMemoryCache.Memcached.Memcached.KeyTransformers
         public override string Transform(string key)
         {
             if (key.IndexOfAny(ForbiddenChars) > -1)
+            {
                 throw new ArgumentException("Keys cannot contain the chars 0x00-0x20 and space.");
+            }
 
             return key;
         }

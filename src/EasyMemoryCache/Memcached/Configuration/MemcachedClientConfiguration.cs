@@ -20,11 +20,11 @@ namespace EasyMemoryCache.Memcached.Configuration
     public class MemcachedClientConfiguration : IMemcachedClientConfiguration
     {
         // these are lazy initialized in the getters
-        private Type nodeLocator;
+        private Type _nodeLocator;
 
         private ITranscoder _transcoder;
         private IMemcachedKeyTransformer _keyTransformer;
-        private ILogger<MemcachedClientConfiguration> _logger;
+        private readonly ILogger<MemcachedClientConfiguration> _logger;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="T:MemcachedClientConfiguration"/> class.
@@ -115,7 +115,8 @@ namespace EasyMemoryCache.Memcached.Configuration
                 }
                 catch (Exception ex)
                 {
-                    _logger.LogError(new EventId(), ex, $"Unable to load authentication type {options.Authentication.Type}.");
+                    _logger.LogError(new EventId(), ex,
+                        $"Unable to load authentication type {options.Authentication.Type}.");
                 }
             }
 
@@ -153,7 +154,9 @@ namespace EasyMemoryCache.Memcached.Configuration
                 try
                 {
                     if (options.Transcoder == "BinaryFormatterTranscoder")
+                    {
                         options.Transcoder = "Enyim.Caching.Memcached.Transcoders.BinaryFormatterTranscoder";
+                    }
 
                     var transcoderType = Type.GetType(options.Transcoder);
                     if (transcoderType != null)
@@ -263,11 +266,11 @@ namespace EasyMemoryCache.Memcached.Configuration
         /// <remarks>If both <see cref="M:NodeLocator"/> and  <see cref="M:NodeLocatorFactory"/> are assigned then the latter takes precedence.</remarks>
         public Type NodeLocator
         {
-            get { return this.nodeLocator; }
+            get { return this._nodeLocator; }
             set
             {
                 ConfigurationHelper.CheckForInterface(value, typeof(IMemcachedNodeLocator));
-                this.nodeLocator = value;
+                this._nodeLocator = value;
             }
         }
 
@@ -314,11 +317,14 @@ namespace EasyMemoryCache.Memcached.Configuration
         IMemcachedNodeLocator IMemcachedClientConfiguration.CreateNodeLocator()
         {
             var f = this.NodeLocatorFactory;
-            if (f != null) return f.Create();
+            if (f != null)
+            {
+                return f.Create();
+            }
 
             return this.NodeLocator == null
-                    ? new SingleNodeLocator()
-                    : (IMemcachedNodeLocator)FastActivator.Create(this.NodeLocator);
+                ? new SingleNodeLocator()
+                : (IMemcachedNodeLocator)FastActivator.Create(this.NodeLocator);
         }
 
         ITranscoder IMemcachedClientConfiguration.CreateTranscoder()
@@ -330,7 +336,8 @@ namespace EasyMemoryCache.Memcached.Configuration
         {
             switch (this.Protocol)
             {
-                case MemcachedProtocol.Text: return new DefaultServerPool(this, new Memcached.Protocol.Text.TextOperationFactory(), _logger);
+                case MemcachedProtocol.Text:
+                    return new DefaultServerPool(this, new Memcached.Protocol.Text.TextOperationFactory(), _logger);
                 case MemcachedProtocol.Binary: return new BinaryPool(this, _logger);
             }
 

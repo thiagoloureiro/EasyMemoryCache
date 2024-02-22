@@ -6,7 +6,7 @@ namespace EasyMemoryCache.Memcached.Logging
 {
     public class DiagnosticsLogFactory : ILogFactory
     {
-        private TextWriter writer;
+        private readonly TextWriter _writer;
 
         public DiagnosticsLogFactory() : this(@"C:\temp\CacheSettings.log")
         {
@@ -15,21 +15,23 @@ namespace EasyMemoryCache.Memcached.Logging
         public DiagnosticsLogFactory(string logPath)
         {
             if (String.IsNullOrEmpty(logPath))
+            {
                 throw new ArgumentNullException(
                     "Log path must be defined.  Add the following to configuration/appSettings: <add key=\"Enyim.Caching.Diagnostics.LogPath\" "
                     + "value=\"path to the log file\" /> or specify a valid path in in the constructor.");
+            }
 
-            this.writer = new StreamWriter(new FileStream(logPath, FileMode.OpenOrCreate));
+            this._writer = new StreamWriter(new FileStream(logPath, FileMode.OpenOrCreate));
         }
 
         ILog ILogFactory.GetLogger(string name)
         {
-            return new TextWriterLog(name, this.writer);
+            return new TextWriterLog(name, this._writer);
         }
 
         ILog ILogFactory.GetLogger(Type type)
         {
-            return new TextWriterLog(type.FullName, this.writer);
+            return new TextWriterLog(type.FullName, this._writer);
         }
     }
 
@@ -67,7 +69,8 @@ namespace EasyMemoryCache.Memcached.Logging
 
         private void Dump(string prefix, string message, params object[] args)
         {
-            var line = String.Format("{0:yyyy-MM-dd' 'HH:mm:ss} [{1}] {2} {3} - ", DateTime.Now, prefix, Thread.CurrentThread.ManagedThreadId, this.name) + String.Format(message, args);
+            var line = String.Format("{0:yyyy-MM-dd' 'HH:mm:ss} [{1}] {2} {3} - ", DateTime.Now, prefix,
+                Thread.CurrentThread.ManagedThreadId, this.name) + String.Format(message, args);
 
             lock (this.writer)
             {
@@ -78,7 +81,8 @@ namespace EasyMemoryCache.Memcached.Logging
 
         private void Dump(string prefix, object message)
         {
-            var line = String.Format("{0:yyyy-MM-dd' 'HH:mm:ss} [{1}] {2} {3} - {4}", DateTime.Now, prefix, Thread.CurrentThread.ManagedThreadId, this.name, message);
+            var line = String.Format("{0:yyyy-MM-dd' 'HH:mm:ss} [{1}] {2} {3} - {4}", DateTime.Now, prefix,
+                Thread.CurrentThread.ManagedThreadId, this.name, message);
 
             lock (this.writer)
             {

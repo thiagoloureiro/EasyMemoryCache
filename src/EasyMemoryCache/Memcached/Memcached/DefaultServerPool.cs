@@ -31,8 +31,15 @@ namespace EasyMemoryCache.Memcached.Memcached
             IOperationFactory opFactory,
             ILogger logger)
         {
-            if (configuration == null) throw new ArgumentNullException("socketConfig");
-            if (opFactory == null) throw new ArgumentNullException("opFactory");
+            if (configuration == null)
+            {
+                throw new ArgumentNullException("socketConfig");
+            }
+
+            if (opFactory == null)
+            {
+                throw new ArgumentNullException("opFactory");
+            }
 
             this.configuration = configuration;
             this.factory = opFactory;
@@ -44,8 +51,13 @@ namespace EasyMemoryCache.Memcached.Memcached
 
         ~DefaultServerPool()
         {
-            try { ((IDisposable)this).Dispose(); }
-            catch { }
+            try
+            {
+                ((IDisposable)this).Dispose();
+            }
+            catch
+            {
+            }
         }
 
         protected virtual IMemcachedNode CreateNode(EndPoint endpoint)
@@ -57,7 +69,10 @@ namespace EasyMemoryCache.Memcached.Memcached
         {
             var isDebug = _logger.IsEnabled(LogLevel.Debug);
 
-            if (isDebug) _logger.LogDebug("Checking the dead servers.");
+            if (isDebug)
+            {
+                _logger.LogDebug("Checking the dead servers.");
+            }
 
             // how this works:
             // 1. timer is created but suspended
@@ -78,7 +93,9 @@ namespace EasyMemoryCache.Memcached.Memcached
                 if (this.isDisposed)
                 {
                     if (_logger.IsEnabled(LogLevel.Warning))
+                    {
                         _logger.LogWarning("IsAlive timer was triggered but the pool is already disposed. Ignoring.");
+                    }
 
                     return;
                 }
@@ -93,13 +110,19 @@ namespace EasyMemoryCache.Memcached.Memcached
                     var n = nodes[i];
                     if (n.IsAlive)
                     {
-                        if (isDebug) _logger.LogDebug("Alive: {0}", n.EndPoint);
+                        if (isDebug)
+                        {
+                            _logger.LogDebug("Alive: {0}", n.EndPoint);
+                        }
 
                         aliveList.Add(n);
                     }
                     else
                     {
-                        if (isDebug) _logger.LogDebug("Dead: {0}", n.EndPoint);
+                        if (isDebug)
+                        {
+                            _logger.LogDebug("Dead: {0}", n.EndPoint);
+                        }
 
                         if (n.Ping())
                         {
@@ -110,7 +133,10 @@ namespace EasyMemoryCache.Memcached.Memcached
                         }
                         else
                         {
-                            if (isDebug) _logger.LogDebug("Still dead.");
+                            if (isDebug)
+                            {
+                                _logger.LogDebug("Still dead.");
+                            }
 
                             deadCount++;
                         }
@@ -120,7 +146,10 @@ namespace EasyMemoryCache.Memcached.Memcached
                 // reinit the locator
                 if (changed)
                 {
-                    if (isDebug) _logger.LogDebug("Reinitializing the locator.");
+                    if (isDebug)
+                    {
+                        _logger.LogDebug("Reinitializing the locator.");
+                    }
 
                     this.nodeLocator.Initialize(aliveList);
                 }
@@ -128,13 +157,19 @@ namespace EasyMemoryCache.Memcached.Memcached
                 // stop or restart the timer
                 if (deadCount == 0)
                 {
-                    if (isDebug) _logger.LogDebug("deadCount == 0, stopping the timer.");
+                    if (isDebug)
+                    {
+                        _logger.LogDebug("deadCount == 0, stopping the timer.");
+                    }
 
                     this.isTimerActive = false;
                 }
                 else
                 {
-                    if (isDebug) _logger.LogDebug("deadCount == {0}, starting the timer.", deadCount);
+                    if (isDebug)
+                    {
+                        _logger.LogDebug("deadCount == {0}, starting the timer.", deadCount);
+                    }
 
                     this.resurrectTimer.Change(this.deadTimeoutMsec, Timeout.Infinite);
                 }
@@ -144,7 +179,10 @@ namespace EasyMemoryCache.Memcached.Memcached
         private void NodeFail(IMemcachedNode node)
         {
             var isDebug = _logger.IsEnabled(LogLevel.Debug);
-            if (isDebug) _logger.LogDebug("Node {0} is dead.", node.EndPoint);
+            if (isDebug)
+            {
+                _logger.LogDebug("Node {0} is dead.", node.EndPoint);
+            }
 
             // the timer is stopped until we encounter the first dead server
             // when we have one, we trigger it and it will run after DeadTimeout has elapsed
@@ -152,7 +190,10 @@ namespace EasyMemoryCache.Memcached.Memcached
             {
                 if (this.isDisposed)
                 {
-                    if (_logger.IsEnabled(LogLevel.Warning)) _logger.LogWarning("Got a node fail but the pool is already disposed. Ignoring.");
+                    if (_logger.IsEnabled(LogLevel.Warning))
+                    {
+                        _logger.LogWarning("Got a node fail but the pool is already disposed. Ignoring.");
+                    }
 
                     return;
                 }
@@ -160,7 +201,9 @@ namespace EasyMemoryCache.Memcached.Memcached
                 // bubble up the fail event to the client
                 var fail = this.nodeFailed;
                 if (fail != null)
+                {
                     fail(node);
+                }
 
                 // re-initialize the locator
                 var newLocator = this.configuration.CreateNodeLocator();
@@ -171,16 +214,26 @@ namespace EasyMemoryCache.Memcached.Memcached
                 // when we have one, we trigger it and it will run after DeadTimeout has elapsed
                 if (!this.isTimerActive)
                 {
-                    if (isDebug) _logger.LogDebug("Starting the recovery timer.");
+                    if (isDebug)
+                    {
+                        _logger.LogDebug("Starting the recovery timer.");
+                    }
 
                     if (this.resurrectTimer == null)
+                    {
                         this.resurrectTimer = new Timer(this.rezCallback, null, this.deadTimeoutMsec, Timeout.Infinite);
+                    }
                     else
+                    {
                         this.resurrectTimer.Change(this.deadTimeoutMsec, Timeout.Infinite);
+                    }
 
                     this.isTimerActive = true;
 
-                    if (isDebug) _logger.LogDebug("Timer started.");
+                    if (isDebug)
+                    {
+                        _logger.LogDebug("Timer started.");
+                    }
                 }
             }
         }
@@ -206,15 +259,13 @@ namespace EasyMemoryCache.Memcached.Memcached
 
         void IServerPool.Start()
         {
-            this.allNodes = this.configuration.Servers.
-                                Select(ep =>
-                                {
-                                    var node = this.CreateNode(ep);
-                                    node.Failed += this.NodeFail;
+            this.allNodes = this.configuration.Servers.Select(ep =>
+            {
+                var node = this.CreateNode(ep);
+                node.Failed += this.NodeFail;
 
-                                    return node;
-                                }).
-                                ToArray();
+                return node;
+            }).ToArray();
 
             // initialize the locator
             var locator = this.configuration.CreateNodeLocator();
@@ -239,7 +290,10 @@ namespace EasyMemoryCache.Memcached.Memcached
 
             lock (this.DeadSync)
             {
-                if (this.isDisposed) return;
+                if (this.isDisposed)
+                {
+                    return;
+                }
 
                 this.isDisposed = true;
 
@@ -247,14 +301,30 @@ namespace EasyMemoryCache.Memcached.Memcached
                 // the nodes one last time
                 var nd = this.nodeLocator as IDisposable;
                 if (nd != null)
-                    try { nd.Dispose(); }
-                    catch (Exception e) { _logger.LogError(nameof(DefaultServerPool), e); }
+                {
+                    try
+                    {
+                        nd.Dispose();
+                    }
+                    catch (Exception e)
+                    {
+                        _logger.LogError(nameof(DefaultServerPool), e);
+                    }
+                }
 
                 this.nodeLocator = null;
 
                 for (var i = 0; i < this.allNodes.Length; i++)
-                    try { this.allNodes[i].Dispose(); }
-                    catch (Exception e) { _logger.LogError(nameof(DefaultServerPool), e); }
+                {
+                    try
+                    {
+                        this.allNodes[i].Dispose();
+                    }
+                    catch (Exception e)
+                    {
+                        _logger.LogError(nameof(DefaultServerPool), e);
+                    }
+                }
 
                 // stop the timer
                 if (this.resurrectTimer != null)

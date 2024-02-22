@@ -76,27 +76,44 @@ namespace EasyMemoryCache.Memcached.Memcached.Locators
 
         IMemcachedNode IMemcachedNodeLocator.Locate(string key)
         {
-            if (key == null) throw new ArgumentNullException("key");
+            if (key == null)
+            {
+                throw new ArgumentNullException("key");
+            }
 
             _serverAccessLock.EnterUpgradeableReadLock();
 
-            try { return Locate(key); }
-            finally { _serverAccessLock.ExitUpgradeableReadLock(); }
+            try
+            {
+                return Locate(key);
+            }
+            finally
+            {
+                _serverAccessLock.ExitUpgradeableReadLock();
+            }
         }
 
         IEnumerable<IMemcachedNode> IMemcachedNodeLocator.GetWorkingNodes()
         {
             _serverAccessLock.EnterReadLock();
 
-            try { return _allServers.Except(_deadServers.Keys).ToArray(); }
-            finally { _serverAccessLock.ExitReadLock(); }
+            try
+            {
+                return _allServers.Except(_deadServers.Keys).ToArray();
+            }
+            finally
+            {
+                _serverAccessLock.ExitReadLock();
+            }
         }
 
         private IMemcachedNode Locate(string key)
         {
             var node = FindNode(key);
             if (node == null || node.IsAlive)
+            {
                 return node;
+            }
 
             // move the current node to the dead list and rebuild the indexes
             _serverAccessLock.EnterWriteLock();
@@ -106,7 +123,9 @@ namespace EasyMemoryCache.Memcached.Memcached.Locators
                 // check if it's still dead or it came back
                 // while waiting for the write lock
                 if (!node.IsAlive)
+                {
                     _deadServers[node] = true;
+                }
 
                 BuildIndex(_allServers.Except(_deadServers.Keys).ToList());
             }
@@ -126,7 +145,10 @@ namespace EasyMemoryCache.Memcached.Memcached.Locators
         /// <returns></returns>
         private IMemcachedNode FindNode(string key)
         {
-            if (_keys.Length == 0) return null;
+            if (_keys.Length == 0)
+            {
+                return null;
+            }
 
             uint itemKeyHash = BitConverter.ToUInt32(new FNV1a().ComputeHash(Encoding.UTF8.GetBytes(key)), 0);
             // get the index of the server assigned to this hash
@@ -151,7 +173,9 @@ namespace EasyMemoryCache.Memcached.Memcached.Locators
             }
 
             if (foundIndex < 0 || foundIndex > _keys.Length)
+            {
                 return null;
+            }
 
             return _servers[_keys[foundIndex]];
         }
@@ -159,7 +183,8 @@ namespace EasyMemoryCache.Memcached.Memcached.Locators
         private static uint[] GenerateKeys(IMemcachedNode node, int numberOfKeys)
         {
             const int KeyLength = 4;
-            const int PartCount = 1; // (ModifiedFNV.HashSize / 8) / KeyLength; // HashSize is in bits, uint is 4 byte long
+            const int
+                PartCount = 1; // (ModifiedFNV.HashSize / 8) / KeyLength; // HashSize is in bits, uint is 4 byte long
 
             var k = new uint[PartCount * numberOfKeys];
 

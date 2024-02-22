@@ -42,8 +42,8 @@ namespace EasyMemoryCache.Memcached.Configuration
                 Parameters = new Dictionary<string, string>
                 {
                     { $"{nameof(zone)}", zone },
-                    { $"{nameof(userName)}", userName},
-                    { $"{nameof(password)}", password}
+                    { $"{nameof(userName)}", userName },
+                    { $"{nameof(password)}", password }
                 }
             };
         }
@@ -71,18 +71,26 @@ namespace EasyMemoryCache.Memcached.Configuration
         public TimeSpan DeadTimeout { get; set; } = new TimeSpan(0, 0, 10);
         public TimeSpan QueueTimeout { get; set; } = new TimeSpan(0, 0, 0, 0, 100);
         public TimeSpan InitPoolTimeout { get; set; } = new TimeSpan(0, 1, 0);
-        public INodeFailurePolicyFactory FailurePolicyFactory { get; set; } = new ThrottlingFailurePolicyFactory(5, TimeSpan.FromMilliseconds(2000));
+
+        public INodeFailurePolicyFactory FailurePolicyFactory { get; set; } =
+            new ThrottlingFailurePolicyFactory(5, TimeSpan.FromMilliseconds(2000));
 
         public void CheckPoolSize()
         {
             if (MinPoolSize < 0)
+            {
                 throw new ArgumentOutOfRangeException("value", "MinPoolSize must be >= 0!");
+            }
 
             if (MinPoolSize > MaxPoolSize)
+            {
                 throw new ArgumentOutOfRangeException("value", "MinPoolSize must be <= MaxPoolSize!");
+            }
 
             if (MaxPoolSize < MinPoolSize)
+            {
                 throw new ArgumentOutOfRangeException("value", "MaxPoolSize must be >= MinPoolSize!");
+            }
         }
 
         public void CheckTimeout()

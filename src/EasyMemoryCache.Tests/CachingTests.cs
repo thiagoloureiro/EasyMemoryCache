@@ -10,11 +10,11 @@ namespace EasyMemoryCache.Tests
 {
     public class CachingTests
     {
-        private string CacheKeyName = "unitTestStringKey";
-        private string CacheKeyName2 = "unitTestStringKey2";
-        private string CacheKeyTestDoubleKey = "CacheKeyTestDoubleKey";
-        private string CacheKeyTestIntegerKey = "CacheKeyTestIntegerKey";
-        private string CacheKeyTestDateTimeKey = "CacheKeyTestDateTimeKey";
+        private readonly string CacheKeyName = "unitTestStringKey";
+        private readonly string CacheKeyName2 = "unitTestStringKey2";
+        private readonly string CacheKeyTestDoubleKey = "CacheKeyTestDoubleKey";
+        private readonly string CacheKeyTestIntegerKey = "CacheKeyTestIntegerKey";
+        private readonly string CacheKeyTestDateTimeKey = "CacheKeyTestDateTimeKey";
 
         [Fact]
         public async Task should_return_datetime_without_parameters_async()

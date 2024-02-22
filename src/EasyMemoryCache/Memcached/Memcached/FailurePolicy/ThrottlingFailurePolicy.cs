@@ -13,8 +13,8 @@ namespace EasyMemoryCache.Memcached.Memcached.FailurePolicy
         private static readonly ILog log = LogManager.GetLogger(typeof(ThrottlingFailurePolicy));
         private static readonly bool LogIsDebugEnabled = log.IsDebugEnabled;
 
-        private int resetAfter;
-        private int failureThreshold;
+        private readonly int resetAfter;
+        private readonly int failureThreshold;
         private DateTime lastFailed;
         private int failCounter;
 
@@ -35,17 +35,25 @@ namespace EasyMemoryCache.Memcached.Memcached.FailurePolicy
 
             if (lastFailed == DateTime.MinValue)
             {
-                if (LogIsDebugEnabled) log.Debug("Setting fail counter to 1.");
+                if (LogIsDebugEnabled)
+                {
+                    log.Debug("Setting fail counter to 1.");
+                }
 
                 failCounter = 1;
             }
             else
             {
                 var diff = (int)(now - lastFailed).TotalMilliseconds;
-                if (LogIsDebugEnabled) log.DebugFormat("Last fail was {0} msec ago with counter {1}.", diff, this.failCounter);
+                if (LogIsDebugEnabled)
+                {
+                    log.DebugFormat("Last fail was {0} msec ago with counter {1}.", diff, this.failCounter);
+                }
 
                 if (diff <= this.resetAfter)
+                {
                     this.failCounter++;
+                }
                 else
                 {
                     this.failCounter = 1;
@@ -56,7 +64,10 @@ namespace EasyMemoryCache.Memcached.Memcached.FailurePolicy
 
             if (this.failCounter == this.failureThreshold)
             {
-                if (LogIsDebugEnabled) log.DebugFormat("Threshold reached, node will fail.");
+                if (LogIsDebugEnabled)
+                {
+                    log.DebugFormat("Threshold reached, node will fail.");
+                }
 
                 this.lastFailed = DateTime.MinValue;
                 this.failCounter = 0;
@@ -64,7 +75,10 @@ namespace EasyMemoryCache.Memcached.Memcached.FailurePolicy
                 return true;
             }
 
-            if (LogIsDebugEnabled) log.DebugFormat("Current counter is {0}, threshold not reached.", this.failCounter);
+            if (LogIsDebugEnabled)
+            {
+                log.DebugFormat("Current counter is {0}, threshold not reached.", this.failCounter);
+            }
 
             return false;
         }
@@ -76,7 +90,9 @@ namespace EasyMemoryCache.Memcached.Memcached.FailurePolicy
     public class ThrottlingFailurePolicyFactory : INodeFailurePolicyFactory, IProviderFactory<INodeFailurePolicyFactory>
     {
         public ThrottlingFailurePolicyFactory(int failureThreshold, TimeSpan resetAfter)
-            : this(failureThreshold, (int)resetAfter.TotalMilliseconds) { }
+            : this(failureThreshold, (int)resetAfter.TotalMilliseconds)
+        {
+        }
 
         public ThrottlingFailurePolicyFactory(int failureThreshold, int resetAfter)
         {
@@ -86,7 +102,8 @@ namespace EasyMemoryCache.Memcached.Memcached.FailurePolicy
 
         // used by the config files
         internal ThrottlingFailurePolicyFactory()
-        { }
+        {
+        }
 
         /// <summary>
         /// Gets or sets the amount of time of in milliseconds after the failure counter is reset.
@@ -113,12 +130,19 @@ namespace EasyMemoryCache.Memcached.Memcached.FailurePolicy
             int failureThreshold;
             ConfigurationHelper.TryGetAndRemove(parameters, "failureThreshold", out failureThreshold, true);
 
-            if (failureThreshold < 1) throw new InvalidOperationException("failureThreshold must be > 0");
+            if (failureThreshold < 1)
+            {
+                throw new InvalidOperationException("failureThreshold must be > 0");
+            }
+
             this.FailureThreshold = failureThreshold;
 
             TimeSpan reset;
             ConfigurationHelper.TryGetAndRemove(parameters, "resetAfter", out reset, true);
-            if (reset <= TimeSpan.Zero) throw new InvalidOperationException("resetAfter must be > 0msec");
+            if (reset <= TimeSpan.Zero)
+            {
+                throw new InvalidOperationException("resetAfter must be > 0msec");
+            }
 
             this.ResetAfter = (int)reset.TotalMilliseconds;
         }

@@ -16,19 +16,32 @@ namespace EasyMemoryCache.Memcached
 
         public void Signal()
         {
-            if (this.count == 0) throw new InvalidOperationException("Counter underflow");
+            if (this.count == 0)
+            {
+                throw new InvalidOperationException("Counter underflow");
+            }
 
             int tmp = Interlocked.Decrement(ref this.count);
 
             if (tmp == 0)
-            { if (!this.mre.Set()) throw new InvalidOperationException("couldn't signal"); }
+            {
+                if (!this.mre.Set())
+                {
+                    throw new InvalidOperationException("couldn't signal");
+                }
+            }
             else if (tmp < 0)
+            {
                 throw new InvalidOperationException("Counter underflow");
+            }
         }
 
         public void Wait()
         {
-            if (this.count == 0) return;
+            if (this.count == 0)
+            {
+                return;
+            }
 
             this.mre.WaitOne();
         }

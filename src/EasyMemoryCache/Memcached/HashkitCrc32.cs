@@ -25,9 +25,20 @@ namespace EasyMemoryCache.Memcached
 
         protected override void HashCore(byte[] array, int ibStart, int cbSize)
         {
-            if (array == null) throw new ArgumentNullException("array");
-            if (ibStart < 0 || ibStart > array.Length) throw new ArgumentOutOfRangeException("ibStart");
-            if (ibStart + cbSize > array.Length) throw new ArgumentOutOfRangeException("cbSize");
+            if (array == null)
+            {
+                throw new ArgumentNullException("array");
+            }
+
+            if (ibStart < 0 || ibStart > array.Length)
+            {
+                throw new ArgumentOutOfRangeException("ibStart");
+            }
+
+            if (ibStart + cbSize > array.Length)
+            {
+                throw new ArgumentOutOfRangeException("cbSize");
+            }
 
             if (this.shouldReset)
             {
@@ -35,7 +46,9 @@ namespace EasyMemoryCache.Memcached
                 this.shouldReset = false;
             }
             else
+            {
                 this.currentHash ^= UInt32.MaxValue;
+            }
 
             this.UnsafeHashCore(array, ibStart, cbSize);
         }
@@ -55,7 +68,9 @@ namespace EasyMemoryCache.Memcached
         }
 
         public uint CurrentHash
-        { get { return this.currentHash; } }
+        {
+            get { return this.currentHash; }
+        }
 
         #region [ UnsafeHashCore               ]
 

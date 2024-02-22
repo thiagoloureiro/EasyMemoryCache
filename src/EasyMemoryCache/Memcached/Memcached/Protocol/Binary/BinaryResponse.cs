@@ -42,9 +42,10 @@ namespace EasyMemoryCache.Memcached.Memcached.Protocol.Binary
         public string GetStatusMessage()
         {
             return this.Data.Array == null
-                    ? null
-                    : (this.responseMessage
-                        ?? (this.responseMessage = Encoding.ASCII.GetString(this.Data.Array, this.Data.Offset, this.Data.Count)));
+                ? null
+                : (this.responseMessage
+                   ?? (this.responseMessage =
+                       Encoding.ASCII.GetString(this.Data.Array, this.Data.Offset, this.Data.Count)));
         }
 
         public unsafe bool Read(PooledSocket socket)
@@ -52,7 +53,9 @@ namespace EasyMemoryCache.Memcached.Memcached.Protocol.Binary
             this.StatusCode = -1;
 
             if (!socket.IsAlive)
+            {
                 return false;
+            }
 
             var header = new byte[HeaderLength];
             socket.Read(header, 0, header.Length);
@@ -77,7 +80,10 @@ namespace EasyMemoryCache.Memcached.Memcached.Protocol.Binary
         {
             this.StatusCode = -1;
 
-            if (!socket.IsAlive) return false;
+            if (!socket.IsAlive)
+            {
+                return false;
+            }
 
             var header = new byte[HeaderLength];
             await socket.ReadAsync(header, 0, header.Length);
@@ -103,7 +109,10 @@ namespace EasyMemoryCache.Memcached.Memcached.Protocol.Binary
             fixed (byte* buffer = header)
             {
                 if (buffer[0] != MAGIC_VALUE)
-                    throw new InvalidOperationException("Expected magic value " + MAGIC_VALUE + ", received: " + buffer[0]);
+                {
+                    throw new InvalidOperationException("Expected magic value " + MAGIC_VALUE + ", received: " +
+                                                        buffer[0]);
+                }
 
                 this.DataType = buffer[HEADER_DATATYPE];
                 this.Opcode = buffer[HEADER_OPCODE];

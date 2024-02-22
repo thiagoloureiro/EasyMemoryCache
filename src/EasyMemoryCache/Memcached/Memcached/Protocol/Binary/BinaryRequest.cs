@@ -10,7 +10,7 @@ namespace EasyMemoryCache.Memcached.Memcached.Protocol.Binary
         private static readonly ILog log = LogManager.GetLogger(typeof(BinaryRequest));
         private static int InstanceCounter;
 
-        public byte Operation;
+        public readonly byte Operation;
         public readonly int CorrelationId;
 
         public string Key;
@@ -38,12 +38,18 @@ namespace EasyMemoryCache.Memcached.Memcached.Protocol.Binary
             byte[] keyData = BinaryConverter.EncodeKey(this.Key);
             int keyLength = keyData == null ? 0 : keyData.Length;
 
-            if (keyLength > 0xffff) throw new InvalidOperationException("KeyTooLong");
+            if (keyLength > 0xffff)
+            {
+                throw new InvalidOperationException("KeyTooLong");
+            }
 
             // extra size
             ArraySegment<byte> extras = this.Extra;
             int extraLength = extras.Array == null ? 0 : extras.Count;
-            if (extraLength > 0xff) throw new InvalidOperationException("ExtraTooLong");
+            if (extraLength > 0xff)
+            {
+                throw new InvalidOperationException("ExtraTooLong");
+            }
 
             // body size
             ArraySegment<byte> body = this.Data;
@@ -101,11 +107,21 @@ namespace EasyMemoryCache.Memcached.Memcached.Protocol.Binary
 
             retval.Add(new ArraySegment<byte>(header.ToArray()));
 
-            if (extraLength > 0) retval.Add(extras);
+            if (extraLength > 0)
+            {
+                retval.Add(extras);
+            }
 
             // NOTE key must be already encoded and should not contain any invalid characters which are not allowed by the protocol
-            if (keyLength > 0) retval.Add(new ArraySegment<byte>(keyData));
-            if (bodyLength > 0) retval.Add(body);
+            if (keyLength > 0)
+            {
+                retval.Add(new ArraySegment<byte>(keyData));
+            }
+
+            if (bodyLength > 0)
+            {
+                retval.Add(body);
+            }
 
             return retval;
         }

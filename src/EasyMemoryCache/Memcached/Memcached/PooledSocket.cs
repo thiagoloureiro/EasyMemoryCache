@@ -18,7 +18,7 @@ namespace EasyMemoryCache.Memcached.Memcached
         private readonly ILogger _logger;
 
         private bool _isAlive;
-        private bool _useSslStream;
+        private readonly bool _useSslStream;
         private Socket _socket;
         private readonly EndPoint _endpoint;
         private readonly int _connectionTimeout;
@@ -26,7 +26,8 @@ namespace EasyMemoryCache.Memcached.Memcached
         private NetworkStream _inputStream;
         private SslStream _sslStream;
 
-        public PooledSocket(EndPoint endpoint, TimeSpan connectionTimeout, TimeSpan receiveTimeout, ILogger logger, bool useSslStream)
+        public PooledSocket(EndPoint endpoint, TimeSpan connectionTimeout, TimeSpan receiveTimeout, ILogger logger,
+            bool useSslStream)
         {
             _logger = logger;
             _isAlive = true;
@@ -58,6 +59,7 @@ namespace EasyMemoryCache.Memcached.Memcached
             //Learn from https://github.com/dotnet/corefx/blob/release/2.2/src/System.Data.SqlClient/src/System/Data/SqlClient/SNI/SNITcpHandle.cs#L180
             var cts = new CancellationTokenSource();
             cts.CancelAfter(_connectionTimeout);
+
             void Cancel()
             {
                 if (_socket != null && !_socket.Connected)
@@ -66,6 +68,7 @@ namespace EasyMemoryCache.Memcached.Memcached
                     _socket = null;
                 }
             }
+
             cts.Token.Register(Cancel);
 
             try
@@ -128,6 +131,7 @@ namespace EasyMemoryCache.Memcached.Memcached
                         _socket.Dispose();
                         _socket = null;
                     }
+
                     throw new TimeoutException($"Timeout to connect to {_endpoint}.");
                 }
             }
@@ -194,7 +198,9 @@ namespace EasyMemoryCache.Memcached.Memcached
             }
 
             if (_logger.IsEnabled(LogLevel.Debug))
+            {
                 _logger.LogDebug("Socket {0} was reset", InstanceId);
+            }
         }
 
         public async Task ResetAsync()
@@ -262,7 +268,13 @@ namespace EasyMemoryCache.Memcached.Memcached
                 {
                     if (_socket != null)
                     {
-                        try { _socket.Dispose(); } catch { }
+                        try
+                        {
+                            _socket.Dispose();
+                        }
+                        catch
+                        {
+                        }
                     }
 
                     if (_inputStream != null)
@@ -302,7 +314,9 @@ namespace EasyMemoryCache.Memcached.Memcached
         private void CheckDisposed()
         {
             if (_socket == null)
+            {
                 throw new ObjectDisposedException("PooledSocket");
+            }
         }
 
         /// <summary>
@@ -342,6 +356,7 @@ namespace EasyMemoryCache.Memcached.Memcached
                 {
                     _isAlive = false;
                 }
+
                 throw;
             }
         }
@@ -357,11 +372,18 @@ namespace EasyMemoryCache.Memcached.Memcached
             {
                 try
                 {
-                    int currentRead = (_useSslStream ? await _sslStream.ReadAsync(buffer, offset, shouldRead) : await _inputStream.ReadAsync(buffer, offset, shouldRead));
+                    int currentRead = (_useSslStream
+                        ? await _sslStream.ReadAsync(buffer, offset, shouldRead)
+                        : await _inputStream.ReadAsync(buffer, offset, shouldRead));
                     if (currentRead == count)
+                    {
                         break;
+                    }
+
                     if (currentRead < 1)
+                    {
                         throw new IOException("The socket seems to be disconnected");
+                    }
 
                     read += currentRead;
                     offset += currentRead;
@@ -397,11 +419,18 @@ namespace EasyMemoryCache.Memcached.Memcached
             {
                 try
                 {
-                    int currentRead = (_useSslStream ? _sslStream.Read(buffer, offset, shouldRead) : _inputStream.Read(buffer, offset, shouldRead));
+                    int currentRead = (_useSslStream
+                        ? _sslStream.Read(buffer, offset, shouldRead)
+                        : _inputStream.Read(buffer, offset, shouldRead));
                     if (currentRead == count)
+                    {
                         break;
+                    }
+
                     if (currentRead < 1)
+                    {
                         throw new IOException("The socket seems to be disconnected");
+                    }
 
                     read += currentRead;
                     offset += currentRead;
@@ -413,6 +442,7 @@ namespace EasyMemoryCache.Memcached.Memcached
                     {
                         _isAlive = false;
                     }
+
                     throw;
                 }
             }
@@ -435,6 +465,7 @@ namespace EasyMemoryCache.Memcached.Memcached
                     {
                         _isAlive = false;
                     }
+
                     throw;
                 }
             }
@@ -467,6 +498,7 @@ namespace EasyMemoryCache.Memcached.Memcached
                     {
                         _sslStream.Write(buf.Array);
                     }
+
                     _sslStream.Flush();
                 }
                 else
@@ -485,6 +517,7 @@ namespace EasyMemoryCache.Memcached.Memcached
                 {
                     _isAlive = false;
                 }
+
                 _logger.LogError(ex, nameof(PooledSocket.Write));
                 throw;
             }
@@ -502,6 +535,7 @@ namespace EasyMemoryCache.Memcached.Memcached
                     {
                         await _sslStream.WriteAsync(buf.Array, 0, buf.Count);
                     }
+
                     await _sslStream.FlushAsync();
                 }
                 else
@@ -510,7 +544,8 @@ namespace EasyMemoryCache.Memcached.Memcached
                     if (bytesTransferred <= 0)
                     {
                         _isAlive = false;
-                        _logger.LogError($"Failed to {nameof(PooledSocket.WriteAsync)}. bytesTransferred: {bytesTransferred}");
+                        _logger.LogError(
+                            $"Failed to {nameof(PooledSocket.WriteAsync)}. bytesTransferred: {bytesTransferred}");
                         ThrowHelper.ThrowSocketWriteError(_endpoint);
                     }
                 }
@@ -521,6 +556,7 @@ namespace EasyMemoryCache.Memcached.Memcached
                 {
                     _isAlive = false;
                 }
+
                 _logger.LogError(ex, nameof(PooledSocket.WriteAsync));
                 throw;
             }
@@ -534,7 +570,10 @@ namespace EasyMemoryCache.Memcached.Memcached
                 var address = Dns.GetHostAddresses(dnsEndPoint.Host).FirstOrDefault(ip =>
                     ip.AddressFamily == AddressFamily.InterNetwork);
                 if (address == null)
+                {
                     throw new ArgumentException(String.Format("Could not resolve host '{0}'.", endpoint));
+                }
+
                 return new IPEndPoint(address, dnsEndPoint.Port);
             }
             else if (endpoint is IPEndPoint)

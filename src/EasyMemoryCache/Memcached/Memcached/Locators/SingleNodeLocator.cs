@@ -11,7 +11,7 @@ namespace EasyMemoryCache.Memcached.Memcached.Locators
     {
         private IMemcachedNode node;
         private bool isInitialized;
-        private object initLock = new Object();
+        private readonly object initLock = new Object();
 
         void IMemcachedNodeLocator.Initialize(IList<IMemcachedNode> nodes)
         {
@@ -26,9 +26,14 @@ namespace EasyMemoryCache.Memcached.Memcached.Locators
         IMemcachedNode IMemcachedNodeLocator.Locate(string key)
         {
             if (!this.isInitialized)
+            {
                 throw new InvalidOperationException("You must call Initialize first");
+            }
 
-            if (this.node == null) return null;
+            if (this.node == null)
+            {
+                return null;
+            }
 
             return this.node;
         }
@@ -36,8 +41,8 @@ namespace EasyMemoryCache.Memcached.Memcached.Locators
         IEnumerable<IMemcachedNode> IMemcachedNodeLocator.GetWorkingNodes()
         {
             return this.node.IsAlive
-                    ? new IMemcachedNode[] { this.node }
-                    : Enumerable.Empty<IMemcachedNode>();
+                ? new IMemcachedNode[] { this.node }
+                : Enumerable.Empty<IMemcachedNode>();
         }
     }
 }
