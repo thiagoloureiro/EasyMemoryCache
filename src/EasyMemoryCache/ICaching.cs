@@ -24,7 +24,7 @@ namespace EasyMemoryCache
         object GetValueFromCache(string key);
 
         T GetValueFromCache<T>(string key);
-
+        Task<T> GetValueFromCacheAsync<T>(string key);
         IEnumerable<string> GetKeys();
     }
 }

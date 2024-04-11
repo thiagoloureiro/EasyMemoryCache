@@ -75,6 +75,11 @@ namespace EasyMemoryCache.Memcached
             return _memcachedClient.Get<T>(key);
         }
 
+        public async Task<T> GetValueFromCacheAsync<T>(string key)
+        {
+            return await _memcachedClient.GetValueAsync<T>(key);
+        }
+
         public IEnumerable<string> GetKeys()
         {
             throw new NotImplementedException();

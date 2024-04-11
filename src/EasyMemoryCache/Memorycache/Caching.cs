@@ -161,6 +161,11 @@ namespace EasyMemoryCache.Memorycache
             return _myCache.Get<T>(key);
         }
 
+        public async Task<T> GetValueFromCacheAsync<T>(string key)
+        {
+            return await Task.Run(() => _myCache.Get<T>(key));
+        }
+
         public void Dispose()
         {
             _myCache?.Dispose();

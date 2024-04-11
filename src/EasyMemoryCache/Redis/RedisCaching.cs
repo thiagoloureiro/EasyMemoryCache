@@ -127,6 +127,11 @@ namespace EasyMemoryCache.Redis
             return _cacheAccessor.Get(key);
         }
 
+        public async Task<T> GetValueFromCacheAsync<T>(string key)
+        {
+            return await _cacheAccessor.GetAsync<T>(key);
+        }
+
         public T GetValueFromCache<T>(string key)
         {
             return _cacheAccessor.Get<T>(key);

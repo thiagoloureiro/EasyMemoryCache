@@ -83,6 +83,21 @@ namespace EasyMemoryCache.Tests
             Assert.Equal(value, GetInteger().Result);
             Assert.Equal(ret, GetInteger().Result);
         }
+        
+        [Fact]
+        public async Task should_set_and_return_int_without_parameters_async()
+        {
+            // Arrange
+            var caching = new Caching();
+            var intValue = 10;
+
+            // Act
+            await caching.SetValueToCacheAsync(CacheKeyTestIntegerKey, intValue, 20);
+
+            // Assert
+            var result = await caching.GetValueFromCacheAsync<int>(CacheKeyTestIntegerKey);
+            Assert.Equal(intValue, result);
+        }
 
         [Fact]
         public async Task should_return_double_without_parameters_async()
