@@ -14,7 +14,7 @@
 		<Copyright>2024© Thiago Loureiro</Copyright>
 		<PackageLicenseFile>LICENSE</PackageLicenseFile>
 		<PackageReleaseNotes>Bump AsyncKeyedLock from 6.3.3 to 6.3.4</PackageReleaseNotes>
-		<Version>2.0.3</Version>
+		<Version>2.0.4</Version>
 		<AssemblyVersion>2.0.2.0</AssemblyVersion>
 		<FileVersion>2.0.2.0</FileVersion>
 		<Icon>https://raw.githubusercontent.com/thiagoloureiro/EasyMemoryCache/master/cacheicon.png</Icon>
@@ -22,9 +22,9 @@
 	</PropertyGroup>
 
 	<ItemGroup>
-		<PackageReference Include="AsyncKeyedLock" Version="6.3.4" />
+		<PackageReference Include="AsyncKeyedLock" Version="6.4.2" />
 		<PackageReference Include="Microsoft.Extensions.Caching.Memory" Version="8.0.0" />
-		<PackageReference Include="Microsoft.Extensions.Caching.StackExchangeRedis" Version="8.0.4" />
+		<PackageReference Include="Microsoft.Extensions.Caching.StackExchangeRedis" Version="8.0.6" />
 		<PackageReference Include="Microsoft.NETCore.Platforms" Version="7.0.4" />
 		<PackageReference Include="Newtonsoft.Json" Version="13.0.3" />
 		<PackageReference Include="protobuf-net" Version="3.2.30" />

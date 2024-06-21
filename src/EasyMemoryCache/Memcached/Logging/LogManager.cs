@@ -32,11 +32,7 @@ namespace EasyMemoryCache.Memcached.Logging
         //TODO: Swith to Microsoft.Extensions.Logging
         static LogManager()
         {
-#if DEBUG
-            factory = new ConsoleLogFactory();
-#else
             _factory = new NullLoggerFactory();
-#endif
         }
 
         /// <summary>
