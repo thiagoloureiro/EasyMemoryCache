@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading;
 
 namespace EasyMemoryCache.Memcached.Memcached.Locators
 {
@@ -11,7 +12,6 @@ namespace EasyMemoryCache.Memcached.Memcached.Locators
     {
         private IMemcachedNode node;
         private bool isInitialized;
-        private readonly object initLock = new Object();
 
         void IMemcachedNodeLocator.Initialize(IList<IMemcachedNode> nodes)
         {
