@@ -1,7 +1,5 @@
 # EasyMemoryCache
-[![Build status](https://ci.appveyor.com/api/projects/status/leosvxv97m6cd1ki?svg=true)](https://ci.appveyor.com/project/thiagoloureiro/easymemorycache)
-
-[![Build history](https://buildstats.info/appveyor/chart/thiagoloureiro/easymemorycache)](https://ci.appveyor.com/project/thiagoloureiro/easymemorycache/history)
+[![Build status](https://dev.azure.com/thiagoguaru/EasyMemoryCache/_apis/build/status/EasyMemoryCache%20-%20CI%20Build)](https://dev.azure.com/thiagoguaru/EasyMemoryCache/_build/latest?definitionId=24)
 
 [![NuGet](https://buildstats.info/nuget/EasyMemoryCache)](http://www.nuget.org/packages/EasyMemoryCache)
 ![](https://img.shields.io/appveyor/tests/thiagoloureiro/easymemorycache)
