@@ -23,7 +23,7 @@ namespace EasyMemoryCache.Memcached.Memcached
     public class MemcachedNode : IMemcachedNode
     {
         private readonly ILogger _logger;
-        private static readonly object SyncRoot = new Object();
+        private static readonly Lock SyncRoot = new Lock();
 
         private bool isDisposed;
 
@@ -291,7 +291,7 @@ namespace EasyMemoryCache.Memcached.Memcached
             private readonly TimeSpan _receiveTimeout;
             private SemaphoreSlim _semaphore;
 
-            private readonly object initLock = new Object();
+            private readonly Lock initLock = new Lock();
 
             internal InternalPoolImpl(
                 MemcachedNode ownerNode,

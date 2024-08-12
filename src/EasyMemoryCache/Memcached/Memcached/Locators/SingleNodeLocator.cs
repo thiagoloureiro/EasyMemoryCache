@@ -11,7 +11,6 @@ namespace EasyMemoryCache.Memcached.Memcached.Locators
     {
         private IMemcachedNode node;
         private bool isInitialized;
-        private readonly object initLock = new Object();
 
         void IMemcachedNodeLocator.Initialize(IList<IMemcachedNode> nodes)
         {

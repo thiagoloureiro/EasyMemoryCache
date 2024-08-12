@@ -18,7 +18,7 @@ namespace EasyMemoryCache.Memcached.Memcached
         private readonly IOperationFactory factory;
         private IMemcachedNodeLocator nodeLocator;
 
-        private readonly object DeadSync = new Object();
+        private readonly Lock DeadSync = new Lock();
         private System.Threading.Timer resurrectTimer;
         private bool isTimerActive;
         private readonly int deadTimeoutMsec;
