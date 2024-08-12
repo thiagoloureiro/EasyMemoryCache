@@ -39,7 +39,7 @@
 	</ItemGroup>
 
 	<ItemGroup Condition="'$(TargetFramework)' == 'net6.0' Or '$(TargetFramework)' == 'net7.0' Or '$(TargetFramework)' == 'net8.0'">
-		<PackageReference Include="Backport.System.Threading.Lock" Version="1.0.1" />
+		<PackageReference Include="Backport.System.Threading.Lock" Version="1.0.2" />
 	</ItemGroup>
 
 	<ItemGroup>
