@@ -24,7 +24,7 @@
 	</PropertyGroup>
 
 	<ItemGroup>
-		<PackageReference Include="AsyncKeyedLock" Version="7.0.0" />
+		<PackageReference Include="AsyncKeyedLock" Version="7.0.1" />
 		<PackageReference Include="Microsoft.Extensions.Caching.Memory" Version="8.0.0" />
 		<PackageReference Include="Microsoft.Extensions.Caching.StackExchangeRedis" Version="8.0.7" />
 		<PackageReference Include="Microsoft.NETCore.Platforms" Version="7.0.4" />
@@ -39,8 +39,8 @@
 		<PackageReference Include="Microsoft.Extensions.Caching.Abstractions" Version="8.0.0" />
 	</ItemGroup>
 
-	<ItemGroup Condition="'$(TargetFramework)' == 'net6.0' Or '$(TargetFramework)' == 'net7.0' Or '$(TargetFramework)' == 'net8.0'">
-		<PackageReference Include="Backport.System.Threading.Lock" Version="1.0.2" />
+	<ItemGroup Condition="!$([MSBuild]::IsTargetFrameworkCompatible('$(TargetFramework)', 'net9.0'))">
+		<PackageReference Include="Backport.System.Threading.Lock" Version="1.1.6" />
 	</ItemGroup>
 
 	<ItemGroup>
