@@ -198,10 +198,12 @@ namespace EasyMemoryCache.Memcached.Memcached
             var result = new PooledSocketResult();
             if (!this.isInitialized)
             {
-                using var releaser = await poolInitLocker.LockAsync(_initPoolTimeout);
-                if (!releaser.EnteredSemaphore)
+                using (var releaser = await poolInitLocker.LockOrNullAsync(_initPoolTimeout))
                 {
-                    return result.Fail("Timeout to poolInitSemaphore.Wait", _logger) as PooledSocketResult;
+                    if (releaser is null)
+                    {
+                        return result.Fail("Timeout to poolInitSemaphore.Wait", _logger) as PooledSocketResult;
+                    }
                 }
 
                 if (!this.isInitialized)
