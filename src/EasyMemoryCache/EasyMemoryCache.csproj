@@ -15,7 +15,7 @@
 		<Copyright>2024© Thiago Loureiro</Copyright>
 		<PackageLicenseFile>LICENSE</PackageLicenseFile>
 		<PackageReleaseNotes>.NET 9 support + Performance improvements</PackageReleaseNotes>
-		<Version>2.0.9</Version>
+		<Version>3.0.1</Version>
 		<AssemblyVersion>2.0.7.0</AssemblyVersion>
 		<FileVersion>2.0.7.0</FileVersion>
 		<Icon>https://raw.githubusercontent.com/thiagoloureiro/EasyMemoryCache/master/cacheicon.png</Icon>
@@ -24,7 +24,7 @@
 	</PropertyGroup>
 
 	<ItemGroup>
-		<PackageReference Include="AsyncKeyedLock" Version="7.1.3" />
+		<PackageReference Include="AsyncKeyedLock" Version="7.1.4" />
 		<PackageReference Include="Microsoft.Extensions.Caching.Memory" Version="9.0.0" />
 		<PackageReference Include="Microsoft.Extensions.Caching.StackExchangeRedis" Version="9.0.0" />
 		<PackageReference Include="Microsoft.NETCore.Platforms" Version="7.0.4" />
@@ -51,15 +51,7 @@
 	
 	</ItemGroup>
 
-	<ItemGroup Condition="'$(TargetFramework)' == 'net6.0'">
-	  <PackageReference Include="Backport.System.Threading.Lock" Version="3.0.1" />
-	</ItemGroup>
-
-	<ItemGroup Condition="'$(TargetFramework)' == 'net7.0'">
-	  <PackageReference Include="Backport.System.Threading.Lock" Version="3.0.1" />
-	</ItemGroup>
-
 	<ItemGroup Condition="'$(TargetFramework)' == 'net8.0'">
-	  <PackageReference Include="Backport.System.Threading.Lock" Version="3.0.1" />
+	  <PackageReference Include="Backport.System.Threading.Lock" Version="3.0.3" />
 	</ItemGroup>
 </Project>
