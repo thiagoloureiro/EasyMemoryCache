@@ -25,7 +25,7 @@
 
 	<ItemGroup>
 		<PackageReference Include="AsyncKeyedLock" Version="7.1.6" />
-		<PackageReference Include="Microsoft.Extensions.Caching.Memory" Version="9.0.7" />
+		<PackageReference Include="Microsoft.Extensions.Caching.Memory" Version="9.0.10" />
 		<PackageReference Include="Microsoft.Extensions.Caching.StackExchangeRedis" Version="9.0.7" />
 		<PackageReference Include="Microsoft.NETCore.Platforms" Version="7.0.4" />
 		<PackageReference Include="Newtonsoft.Json" Version="13.0.3" />
@@ -34,9 +34,9 @@
 		<PackageReference Include="System.Threading.Tasks.Extensions" Version="4.6.3" />
 		<PackageReference Include="Microsoft.Extensions.Configuration.Abstractions" Version="9.0.7" />
 		<PackageReference Include="Microsoft.Extensions.Options.ConfigurationExtensions" Version="9.0.7" />
-		<PackageReference Include="Microsoft.Extensions.Logging.Abstractions" Version="9.0.7" />
-		<PackageReference Include="Microsoft.Extensions.Options" Version="9.0.7" />
-		<PackageReference Include="Microsoft.Extensions.Caching.Abstractions" Version="9.0.7" />
+		<PackageReference Include="Microsoft.Extensions.Logging.Abstractions" Version="9.0.10" />
+		<PackageReference Include="Microsoft.Extensions.Options" Version="9.0.10" />
+		<PackageReference Include="Microsoft.Extensions.Caching.Abstractions" Version="9.0.10" />
 	</ItemGroup>
 
 	<ItemGroup>
