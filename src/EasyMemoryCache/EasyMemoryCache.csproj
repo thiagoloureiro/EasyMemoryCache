@@ -36,7 +36,7 @@
 		<PackageReference Include="Microsoft.Extensions.Options.ConfigurationExtensions" Version="10.0.5" />
 		<PackageReference Include="Microsoft.Extensions.Logging.Abstractions" Version="10.0.5" />
 		<PackageReference Include="Microsoft.Extensions.Options" Version="10.0.5" />
-		<PackageReference Include="Microsoft.Extensions.Caching.Abstractions" Version="10.0.5" />
+		<PackageReference Include="Microsoft.Extensions.Caching.Abstractions" Version="10.0.6" />
 	</ItemGroup>
 
 	<ItemGroup>
