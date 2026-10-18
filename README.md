@@ -20,8 +20,8 @@
     <img src="https://img.shields.io/badge/license-MIT-green?style=flat-square" alt="MIT license" />
   </a>
   <img src="https://img.shields.io/badge/.NET-8%20%7C%209%20%7C%2010-512BD4?style=flat-square&logo=dotnet&logoColor=white" alt=".NET 8, 9, and 10" />
-  <a href="https://github.com/thiagoloureiro/EasyMemoryCache/actions/workflows/codeql.yml">
-    <img src="https://img.shields.io/github/actions/workflow/status/thiagoloureiro/EasyMemoryCache/codeql.yml?style=flat-square&logo=github&label=CodeQL" alt="CodeQL status" />
+  <a href="https://github.com/thiagoloureiro/EasyMemoryCache/actions/workflows/github-code-scanning/codeql">
+    <img src="https://img.shields.io/github/actions/workflow/status/thiagoloureiro/EasyMemoryCache/github-code-scanning/codeql?style=flat-square&logo=github&label=CodeQL" alt="CodeQL status" />
   </a>
   <a href="https://dev.azure.com/thiagoguaru/EasyMemoryCache/_build/latest?definitionId=24">
     <img src="https://dev.azure.com/thiagoguaru/EasyMemoryCache/_apis/build/status/EasyMemoryCache%20-%20CI%20Build?style=flat-square" alt="Azure Pipelines build status" />
