@@ -17,7 +17,7 @@
     <img src="https://img.shields.io/nuget/dt/EasyMemoryCache?style=flat-square&logo=nuget&logoColor=white&label=Downloads" alt="NuGet downloads" />
   </a>
   <a href="https://github.com/thiagoloureiro/EasyMemoryCache/blob/master/LICENSE">
-    <img src="https://img.shields.io/github/license/thiagoloureiro/EasyMemoryCache?style=flat-square" alt="MIT license" />
+    <img src="https://img.shields.io/badge/license-MIT-green?style=flat-square" alt="MIT license" />
   </a>
   <img src="https://img.shields.io/badge/.NET-8%20%7C%209%20%7C%2010-512BD4?style=flat-square&logo=dotnet&logoColor=white" alt=".NET 8, 9, and 10" />
   <a href="https://github.com/thiagoloureiro/EasyMemoryCache/actions/workflows/codeql.yml">
