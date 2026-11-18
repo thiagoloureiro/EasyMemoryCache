@@ -14,10 +14,10 @@
 		<PackageProjectUrl>https://github.com/thiagoloureiro/EasyMemoryCache</PackageProjectUrl>
 		<Copyright>2026© Thiago Loureiro</Copyright>
 		<PackageLicenseFile>LICENSE</PackageLicenseFile>
-		<PackageReleaseNotes>.NET 10 support</PackageReleaseNotes>
+		<PackageReleaseNotes>.NET 10 and 11 support</PackageReleaseNotes>
 		<Version>3.1.9</Version>
-		<AssemblyVersion>3.1.8.0</AssemblyVersion>
-		<FileVersion>3.1.8.0</FileVersion>
+		<AssemblyVersion>3.1.9.0</AssemblyVersion>
+		<FileVersion>3.1.9.0</FileVersion>
 		<Icon>https://raw.githubusercontent.com/thiagoloureiro/EasyMemoryCache/master/cacheicon.png</Icon>
 		<PackageIcon>cacheicon.png</PackageIcon>
 		<PackageReadmeFile>README.md</PackageReadmeFile>
