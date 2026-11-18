@@ -1,11 +1,11 @@
 # EasyMemoryCache
 
-One `ICaching` interface for in-memory cache, Redis, and Memcached. Sync and async, with dependency injection for .NET 8, 9, and 10.
+One `ICaching` interface for in-memory cache, Redis, and Memcached. Sync and async, with dependency injection for .NET 10 and 11.
 
 [![NuGet](https://img.shields.io/nuget/v/EasyMemoryCache?style=flat-square&logo=nuget&logoColor=white&label=NuGet)](https://www.nuget.org/packages/EasyMemoryCache)
 [![Downloads](https://img.shields.io/nuget/dt/EasyMemoryCache?style=flat-square&logo=nuget&logoColor=white&label=Downloads)](https://www.nuget.org/packages/EasyMemoryCache)
 [![License](https://img.shields.io/badge/license-MIT-green?style=flat-square)](https://github.com/thiagoloureiro/EasyMemoryCache/blob/master/LICENSE)
-![.NET](https://img.shields.io/badge/.NET-8%20%7C%209%20%7C%2010-512BD4?style=flat-square&logo=dotnet&logoColor=white)
+![.NET](https://img.shields.io/badge/.NET-10%20%7C%2011-512BD4?style=flat-square&logo=dotnet&logoColor=white)
 
 ## Install
 

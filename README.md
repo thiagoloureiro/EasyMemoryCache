@@ -6,7 +6,7 @@
 
 <p align="center">
   One <code>ICaching</code> interface for in-memory cache, Redis, and Memcached.<br/>
-  Sync and async, with dependency injection for .NET 8, 9, and 10.
+  Sync and async, with dependency injection for .NET 10 and 11.
 </p>
 
 <p align="center">
@@ -19,7 +19,7 @@
   <a href="https://github.com/thiagoloureiro/EasyMemoryCache/blob/master/LICENSE">
     <img src="https://img.shields.io/badge/license-MIT-green?style=flat-square" alt="MIT license" />
   </a>
-  <img src="https://img.shields.io/badge/.NET-8%20%7C%209%20%7C%2010-512BD4?style=flat-square&logo=dotnet&logoColor=white" alt=".NET 8, 9, and 10" />
+  <img src="https://img.shields.io/badge/.NET-10%20%7C%2011-512BD4?style=flat-square&logo=dotnet&logoColor=white" alt=".NET 10 and 11" />
   <a href="https://github.com/thiagoloureiro/EasyMemoryCache/actions/workflows/github-code-scanning/codeql">
     <img src="https://img.shields.io/github/actions/workflow/status/thiagoloureiro/EasyMemoryCache/github-code-scanning/codeql?style=flat-square&logo=github&label=CodeQL" alt="CodeQL status" />
   </a>
