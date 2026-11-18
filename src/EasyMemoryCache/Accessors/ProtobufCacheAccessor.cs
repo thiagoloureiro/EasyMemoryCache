@@ -2,6 +2,7 @@
 using ProtoBuf;
 using System;
 using System.IO;
+using System.Threading;
 using System.Threading.Tasks;
 
 namespace EasyMemoryCache.Accessors
@@ -31,9 +32,9 @@ namespace EasyMemoryCache.Accessors
             }
         }
 
-        public override async Task<T> GetAsync<T>(string key)
+        public override async Task<T> GetAsync<T>(string key, CancellationToken cancellationToken = default)
         {
-            var data = await Cache.GetAsync(key);
+            var data = await Cache.GetAsync(key, cancellationToken).ConfigureAwait(false);
             if (data == null)
             {
                 return default;
@@ -42,6 +43,34 @@ namespace EasyMemoryCache.Accessors
             using (var stream = new MemoryStream(data))
             {
                 return Serializer.Deserialize<T>(stream);
+            }
+        }
+
+        public override bool TryGet<T>(string key, out T value)
+        {
+            var data = Cache.Get(key);
+            if (data == null)
+            {
+                value = default;
+                return false;
+            }
+
+            using (var stream = new MemoryStream(data))
+            {
+                value = Serializer.Deserialize<T>(stream);
+                return true;
+            }
+        }
+
+        public override async Task<CacheResult<T>> TryGetAsync<T>(string key, CancellationToken cancellationToken = default)
+        {
+            var data = await Cache.GetAsync(key, cancellationToken).ConfigureAwait(false);
+            if (data == null)
+                return CacheResult<T>.Miss;
+
+            using (var stream = new MemoryStream(data))
+            {
+                return CacheResult<T>.Hit(Serializer.Deserialize<T>(stream));
             }
         }
 
@@ -54,12 +83,12 @@ namespace EasyMemoryCache.Accessors
             }
         }
 
-        protected override async Task SetInternalAsync(string key, object value, DistributedCacheEntryOptions options)
+        protected override async Task SetInternalAsync(string key, object value, DistributedCacheEntryOptions options, CancellationToken cancellationToken)
         {
             using (var stream = new MemoryStream())
             {
                 Serializer.Serialize(stream, value);
-                await Cache.SetAsync(key, stream.ToArray(), options);
+                await Cache.SetAsync(key, stream.ToArray(), options, cancellationToken).ConfigureAwait(false);
             }
         }
     }

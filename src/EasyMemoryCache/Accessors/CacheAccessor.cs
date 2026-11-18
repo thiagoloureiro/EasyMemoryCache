@@ -1,6 +1,7 @@
 ﻿using Microsoft.Extensions.Caching.Distributed;
 using Microsoft.Extensions.Caching.StackExchangeRedis;
 using System;
+using System.Threading;
 using System.Threading.Tasks;
 
 namespace EasyMemoryCache.Accessors
@@ -19,11 +20,15 @@ namespace EasyMemoryCache.Accessors
 
         public abstract T Get<T>(string key);
 
-        public abstract Task<T> GetAsync<T>(string key);
+        public abstract Task<T> GetAsync<T>(string key, CancellationToken cancellationToken = default);
+
+        public abstract bool TryGet<T>(string key, out T value);
+
+        public abstract Task<CacheResult<T>> TryGetAsync<T>(string key, CancellationToken cancellationToken = default);
 
         protected abstract void SetInternal(string key, object value, DistributedCacheEntryOptions options);
 
-        protected abstract Task SetInternalAsync(string key, object value, DistributedCacheEntryOptions options);
+        protected abstract Task SetInternalAsync(string key, object value, DistributedCacheEntryOptions options, CancellationToken cancellationToken);
 
         public void Set(string key, object value, int cacheTime)
         {
@@ -40,7 +45,7 @@ namespace EasyMemoryCache.Accessors
             SetInternal(key, value, entryOptions);
         }
 
-        public async Task SetAsync(string key, object value, int cacheTime)
+        public async Task SetAsync(string key, object value, int cacheTime, CancellationToken cancellationToken = default)
         {
             if (value == null)
             {
@@ -52,7 +57,7 @@ namespace EasyMemoryCache.Accessors
                 AbsoluteExpirationRelativeToNow = TimeSpan.FromSeconds(cacheTime)
             };
 
-            await SetInternalAsync(key, value, entryOptions);
+            await SetInternalAsync(key, value, entryOptions, cancellationToken).ConfigureAwait(false);
         }
 
         public void Remove(string key)
@@ -60,9 +65,9 @@ namespace EasyMemoryCache.Accessors
             Cache.Remove(key);
         }
 
-        public void RemoveAsync(string key)
+        public Task RemoveAsync(string key, CancellationToken cancellationToken = default)
         {
-            Cache.RemoveAsync(key);
+            return Cache.RemoveAsync(key, cancellationToken);
         }
 
         public void Dispose() => Dispose(true);

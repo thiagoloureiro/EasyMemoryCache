@@ -7,14 +7,22 @@ namespace EasyMemoryCache.Extensions
     {
         public static int Convert(CacheTimeInterval interval, int value)
         {
-            return interval switch
+            if (value <= 0)
+                throw new ArgumentOutOfRangeException(nameof(value), value, "Cache time must be greater than zero.");
+
+            long seconds = interval switch
             {
                 CacheTimeInterval.Seconds => value,
-                CacheTimeInterval.Minutes => value * 60,
-                CacheTimeInterval.Hours => value * 60 * 60,
-                CacheTimeInterval.Days => value * 24 * 60 * 60,
+                CacheTimeInterval.Minutes => (long)value * 60,
+                CacheTimeInterval.Hours => (long)value * 60 * 60,
+                CacheTimeInterval.Days => (long)value * 24 * 60 * 60,
                 _ => throw new ArgumentOutOfRangeException(nameof(interval), interval, null)
             };
+
+            if (seconds > int.MaxValue)
+                throw new ArgumentOutOfRangeException(nameof(value), value, "Cache time is too large.");
+
+            return (int)seconds;
         }
     }
 }

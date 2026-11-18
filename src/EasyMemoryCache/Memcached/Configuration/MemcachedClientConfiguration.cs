@@ -151,12 +151,11 @@ namespace EasyMemoryCache.Memcached.Configuration
 
             if (!string.IsNullOrEmpty(options.Transcoder))
             {
+                if (options.Transcoder.Contains("BinaryFormatter", StringComparison.OrdinalIgnoreCase))
+                    throw new NotSupportedException("BinaryFormatterTranscoder cannot be used. Deserializing BinaryFormatter payloads from cache can execute code.");
+
                 try
                 {
-                    if (options.Transcoder == "BinaryFormatterTranscoder")
-                    {
-                        options.Transcoder = "Enyim.Caching.Memcached.Transcoders.BinaryFormatterTranscoder";
-                    }
 
                     var transcoderType = Type.GetType(options.Transcoder);
                     if (transcoderType != null)
