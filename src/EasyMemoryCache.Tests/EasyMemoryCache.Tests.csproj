@@ -10,7 +10,7 @@
 
     <FileVersion>2.0.1.0</FileVersion>
 
-    <TargetFrameworks>net11.0</TargetFrameworks>
+    <TargetFramework>net11.0</TargetFramework>
   </PropertyGroup>
 
   <ItemGroup>
